@@ -53,8 +53,30 @@ const html = `<!doctype html>
 </html>`;
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const path = new URL(request.url).pathname;
+    if (path === "/api/health") {
+  try {
+    await env.DB.prepare(
+      "SELECT username FROM creator LIMIT 1"
+    ).all();
+
+    return Response.json(
+      { ok: true, database: "connected", table: "creator" },
+      { headers: { "Cache-Control": "no-store" } }
+    );
+  } catch (error) {
+    console.error("Database health check failed", error);
+
+    return Response.json(
+      { ok: false, database: "unavailable" },
+      {
+        status: 503,
+        headers: { "Cache-Control": "no-store" }
+      }
+    );
+  }
+}
 
     if (path === "/health") {
       return Response.json({ ok: true });
