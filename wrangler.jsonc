@@ -14,7 +14,15 @@
     {
       "binding": "DB",
       "database_name": "nextobsession-db",
-      "database_id": "3fb99811-2e01-4a3f-a2ff-1af5b4e99793"
+      "database_id": "cbe1e8f7-ff9c-4959-b0b4-19557988126e"
     }
-  ]
+  ],
+  "previews": {
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_id": "3fb99811-2e01-4a3f-a2ff-1af5b4e99793"
+      }
+    ]
+  }
 }
