@@ -1,0 +1,64 @@
+import { CATEGORY_GROUPS } from '../config/categories.js';
+const byId = new Map(CATEGORY_GROUPS.flatMap(group => group.items.map(item => [item.id, { ...item, group: group.id }])));
+export class FilterInputError extends Error {}
+export function readFilters(url) {
+  const values = url.searchParams.getAll('category');
+  if (values.length > 30) throw new FilterInputError('Too many categories.');
+  const categories = [...new Set(values)].sort();
+  if (categories.some(id => !byId.has(id))) throw new FilterInputError('Unknown category.');
+  const location = (url.searchParams.get('location') || '').trim().slice(0,80);
+  const price = url.searchParams.get('price') || '';
+  if (!['','free','paid'].includes(price)) throw new FilterInputError('Unknown price filter.');
+  return { categories, location, price };
+}
+export const filterKey = filters => JSON.stringify(filters);
+export function filterParams(filters, params = new URLSearchParams()) {
+  for (const id of filters.categories) params.append('category',id);
+  if(filters.location)params.set('location',filters.location);
+  if(filters.price)params.set('price',filters.price);
+  return params;
+}
+const literal = value => "'" + value.replace(/'/g,"''") + "'";
+export function filterPlan(filters, columns) {
+  const inputs=[],bindings=[],candidates=[],conditions=[],ctes=[];
+  const column = name => columns.has(name) ? 'creator.'+name : 'NULL';
+  const selected = new Map();
+  for(const id of filters.categories){const category=byId.get(id);if(!selected.has(category.group))selected.set(category.group,[]);selected.get(category.group).push(...category.keywords);}
+  if(selected.size){
+    inputs.push('? AS category_rules');bindings.push(JSON.stringify([...selected.values()]));
+    // A group may be prefiltered only if every OR branch has an indexed term.
+    let groupIndex=0;
+    for(const rules of selected.values()){
+      const terms=rules.map(rule=>{
+        const tokens=rule.mode==='contains'?[rule.term]:rule.term.match(/[\p{L}\p{N}]+/gu)||[];
+        const long=tokens.filter(token=>[...token].length>=3);
+        return long.length?'('+long.map(t=>'"'+t.replace(/"/g,'""')+'"').join(' AND ')+')':null;
+      });
+      if(terms.every(Boolean)){
+        const key='category_match'+groupIndex++;inputs.push('? AS '+key);bindings.push([...new Set(terms)].join(' OR '));
+        candidates.push('creator.rowid IN (SELECT rowid FROM creator_search_v1 WHERE bio MATCH (SELECT '+key+' FROM input))');
+      }
+    }
+    let words='lower(COALESCE(bio,\'\'))';
+    for(const sep of ['\t','\n','\r','.',',','_','-','/','\\','|',':',';','!','?','(',')','[',']','{','}','"',"'",'@','+','&']) words=`replace(${words}, ${literal(sep)}, ' ')`;
+    for(let i=0;i<7;i++)words=`replace(${words}, '  ', ' ')`;
+    ctes.push(`filter_text AS (SELECT FILTER_SOURCE.*, lower(COALESCE(bio,'')) AS _filter_bio, (' ' || trim(${words}) || ' ') AS _filter_words FROM FILTER_SOURCE)`);
+    conditions.push(`NOT EXISTS (SELECT 1 FROM json_each(input.category_rules) AS filter_group WHERE NOT EXISTS (SELECT 1 FROM json_each(filter_group.value) AS keyword WHERE CASE json_extract(keyword.value,'$.mode') WHEN 'contains' THEN instr(_filter_bio,json_extract(keyword.value,'$.term')) > 0 ELSE _filter_words GLOB ('*[^a-z0-9À-ʯͰ-ϿЀ-ԯ]' || json_extract(keyword.value,'$.words') || '[^a-z0-9À-ʯͰ-ϿЀ-ԯ]*') END))`);
+    // Canonicalize keyword boundaries in JS once instead of SQL for every row.
+    bindings[0]=JSON.stringify([...selected.values()].map(rules=>rules.map(rule=>({...rule,words:rule.term.replace(/[^\p{L}\p{N}]+/gu,' ').trim()}))));
+  }
+  if(filters.location){
+    const needle=filters.location.toLowerCase();
+    let field="COALESCE(creator.location,'')";
+    for(const ch of new Set([...needle]))if(ch.charCodeAt(0)>127&&ch.toUpperCase()!==ch&&[...ch.toUpperCase()].length===1)field=`replace(${field},${literal(ch.toUpperCase())},${literal(ch)})`;
+    inputs.push('? AS location_filter');bindings.push(needle);
+    candidates.push('instr(lower('+field+'), (SELECT location_filter FROM input)) > 0');
+    if([...needle].length>=3){inputs.push('? AS location_match');bindings.push('"'+needle.replace(/"/g,'""')+'"');candidates.push('creator.rowid IN (SELECT rowid FROM creator_search_v1 WHERE location MATCH (SELECT location_match FROM input))');}
+  }
+  if(filters.price){
+    const effective=`CASE WHEN ${column('subscription_type')} = 'free' THEN 0 ELSE COALESCE(${column('subscription_current_price_cents')}, ${column('subscription_price_cents')}, 0) END`;
+    candidates.push('(' + effective + (filters.price==='free'?' = 0)':' > 0)'));
+  }
+  return {inputs,bindings,candidates,conditions,ctes};
+}
+export { CATEGORY_GROUPS, byId };
