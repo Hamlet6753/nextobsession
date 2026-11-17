@@ -1,0 +1,9 @@
+// Merge this assets property into your EXISTING Wrangler configuration.
+// Keep its name, main, routes, d1_databases, previews and other settings.
+{
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": false
+  }
+}
