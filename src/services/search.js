@@ -4,7 +4,7 @@ const SEARCH_FIELDS = ['name', 'username', 'location', 'bio', 'website'];
 const SEARCH_INDEX = 'creator_search_v1';
 const separators = [' ', '\t', '\n', '\r', '.', ',', '_', '-', '/', '\\', '|', ':', ';', '!', '?', '(', ')', '[', ']', '{', '}', '"', "'", '@', '+', '&'];
 const literal = value => "'" + value.replace(/'/g, "''") + "'";
-export function searchPlan(q, columns) {
+export function searchPlan(q, columns, extraCandidates = []) {
   const phrase = q.trim().replace(/^@/, '').replace(/\s+/gu, ' ').toLowerCase();
   const tokens = [...new Set(phrase.split(' ').filter(Boolean))];
   if (!tokens.length) return { inputs: [], bindings: [], ctes: [], source: 'creator_source', filter: '', rank: '0' };
@@ -17,6 +17,7 @@ export function searchPlan(q, columns) {
     bindings.push(longTokens.map(token => '"' + token.replace(/"/g, '""') + '"').join(' AND '));
     filter = ` WHERE creator.rowid IN (SELECT rowid FROM ${SEARCH_INDEX} WHERE ${SEARCH_INDEX} MATCH (SELECT search_match FROM input))`;
   }
+  if (extraCandidates.length) filter += (filter ? ' AND ' : ' WHERE ') + extraCandidates.join(' AND ');
   // SQLite lower() only folds ASCII. Fold the non-ASCII query characters'
   // uppercase variants as well, for literal substring checks and relevance.
   const mappings = [...new Set([...phrase])].filter(char => char.toUpperCase() !== char && [...char.toUpperCase()].length === 1 && char.charCodeAt(0) > 127);
