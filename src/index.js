@@ -12,7 +12,7 @@ export default {
       return new Response('Method not allowed',{status:405,headers:{Allow:'GET, HEAD'}});
     }
     try {
-      if (path.startsWith('/assets/')) {
+      if (path.startsWith('/assets/') || /^\/(?:favicon\.svg|favicon-32x32\.png|apple-touch-icon\.png|icon-192\.png|icon-512\.png|icon-maskable-512\.png|logo\.svg|logo-1024\.png|site\.webmanifest)$/.test(path)) {
         if (!env.ASSETS) return new Response('Configure the ASSETS binding in Wrangler.', {status:503});
         return await env.ASSETS.fetch(request);
       }
