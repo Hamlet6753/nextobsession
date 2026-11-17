@@ -17,6 +17,11 @@ function stats(row, detailed = false) {
   ).join('');
 }
 
+function creatorLocation(value, className = '', tag = 'div') {
+  const text = typeof value === 'string' ? value.trim() : '';
+  if (!text) return '';
+  return `<${tag} class="location creator-location ${className}"><svg class="location-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>${escape(text)}</span></${tag}>`;
+}
 function creatorPrice(row, className = '') {
   const amount = row.subscription_type === 'free' ? 0 :
     [row.subscription_current_price_cents, row.subscription_price_cents].find(value => Number.isSafeInteger(value) && value >= 0) ?? 0;
@@ -33,7 +38,7 @@ function card(row) {
     const url = safeUrl(value);
     return url ? `<img class="${cls}" src="${escape(url)}" alt="${escape(alt)}" loading="lazy" referrerpolicy="no-referrer">` : '';
   };
-  return `<article class="card" data-username="${escape(row.username)}"><a class="card-profile-link" href="${path}" aria-label="${escape('View profile: '+(row.name || row.username))}"><div class="cover">${picture(row.banner_url,'','banner')}</div><div class="card-identity"><div class="avatar-wrap">${escape((row.name || row.username.replace('@','')).slice(0,1).toUpperCase())}${picture(row.avatar_url,'','avatar')}</div><h2>${escape(row.name || row.username)}</h2><div class="username">${escape(row.username)}</div></div></a><div class="card-body"><p class="bio-preview">${escape(row.bio || '')}</p><div class="location card-location">${row.location ? escape(row.location) : '<span aria-hidden="true">&nbsp;</span>'}</div><div class="card-footer"><div class="card-stats">${stats(row)}</div>${creatorPrice(row)}</div></div></article>`;
+  return `<article class="card" data-username="${escape(row.username)}"><a class="card-profile-link" href="${path}" aria-label="${escape('View profile: '+(row.name || row.username))}"><div class="cover">${picture(row.banner_url,'','banner')}</div><div class="card-identity"><div class="avatar-wrap">${escape((row.name || row.username.replace('@','')).slice(0,1).toUpperCase())}${picture(row.avatar_url,'','avatar')}</div><h2>${escape(row.name || row.username)}</h2><div class="username">${escape(row.username)}</div></div></a><div class="card-body"><p class="bio-preview">${escape(row.bio || '')}</p>${creatorLocation(row.location, 'card-location')}<div class="card-footer"><div class="card-stats">${stats(row)}</div>${creatorPrice(row)}</div></div></article>`;
 }
 
-export { image, stats, creatorPrice, creatorActions, card };
+export { image, stats, creatorPrice, creatorActions, creatorLocation, card };

@@ -1,3 +1,4 @@
+import { searchPlan } from './search.js';
 const PAGE_SIZE = 24;
 const SORTS = {
   random: { label: 'Random', direction: 'ASC' },
@@ -21,9 +22,9 @@ function decodeCursor(raw) {
   if (!raw || raw.length > 3000 || !/^[A-Za-z0-9_-]+$/.test(raw)) throw new DirectoryInputError('Invalid continuation. Refresh the page.');
   try {
     const value = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(atob(raw.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))));
-    if (!value || value.v !== 1 || typeof value.q !== 'string' || value.q.length > 80 ||
+    if (!value || value.v !== 2 || typeof value.q !== 'string' || value.q.length > 80 ||
         !Object.hasOwn(SORTS, value.s) || !Number.isInteger(value.seed) || value.seed < 1 || value.seed >= 2147483647 ||
-        typeof value.u !== 'string' || !/^@[a-zA-Z0-9_.-]{1,64}$/.test(value.u)) throw new Error();
+        !Number.isInteger(value.r) || value.r < 0 || value.r > 100 || typeof value.u !== 'string' || !/^@[a-zA-Z0-9_.-]{1,64}$/.test(value.u)) throw new Error();
     if (value.k !== null) {
       if (value.s === 'updated_asc' || value.s === 'updated_desc') {
         if (typeof value.k !== 'string' || value.k.length > 100) throw new Error();
@@ -46,42 +47,43 @@ async function directoryPage(db, state) {
   const fields = await db.prepare('PRAGMA table_info(creator)').all();
   const columns = new Set(fields.results.map(field => field.name));
   const column = name => columns.has(name) ? '"' + name + '"' : 'NULL';
-  let expression, parameters = [];
+  let expression;
+  const plan = searchPlan(q, columns);
+  const searching = plan.bindings.length > 0;
+  const parameters = [seed, ...plan.bindings];
   if (sort === 'random') {
-    // Stable seeded pseudo-random ranking. Uses SQLite's persistent rowid, not
-    // RANDOM() on each request, so continuation retains exactly the same order.
-    // Both intermediate products fit signed int64. No schema migration needed.
-    expression = '(((creator.rowid % 2147483647) * (creator.rowid % 2147483647)) % 2147483647 * ?) % 2147483647';
-    parameters.push(seed);
+    expression = searching ? '0' : '(((_creator_rowid % 2147483647) * (_creator_rowid % 2147483647)) % 2147483647 * input.seed) % 2147483647';
   } else if (sort === 'price_asc' || sort === 'price_desc') {
     expression = `CASE WHEN ${column('subscription_type')} = 'free' THEN 0 ELSE COALESCE(${column('subscription_current_price_cents')}, ${column('subscription_price_cents')}, 0) END`;
   } else {
     expression = column(SORTS[sort].column);
   }
-  const where = [];
-  if (q) {
-    const prefix = q.replace(/^@/, '').replace(/[\\%_]/g, c => '\\' + c);
-    where.push("(username LIKE ? ESCAPE '\\' COLLATE NOCASE OR name LIKE ? ESCAPE '\\' COLLATE NOCASE)");
-    parameters.push('@' + prefix + '%', prefix + '%');
-  }
+  const ctes = ['input AS (SELECT ? AS seed' + (plan.inputs.length ? ', ' + plan.inputs.join(', ') : '') + ')'];
+  if (searching) ctes.push(...plan.ctes);
+  else ctes.push('creator_source AS (SELECT creator.*, creator.rowid AS _creator_rowid, 0 AS _relevance FROM creator)');
+  ctes.push('ranked AS (SELECT ' + plan.source + '.*, (' + expression + ') AS _sort_key FROM ' + plan.source + ' CROSS JOIN input)');
   let continuation = '';
   if (cursor) {
+    let secondary;
+    const tail = [];
     if (cursor.k === null) {
-      continuation = ' WHERE _sort_key IS NULL AND username > ?';
-      parameters.push(cursor.u);
+      secondary = '(_sort_key IS NULL AND username > ?)';
+      tail.push(cursor.u);
     } else {
       const comparison = SORTS[sort].direction === 'DESC' ? '<' : '>';
-      continuation = ` WHERE (_sort_key IS NULL OR _sort_key ${comparison} ? OR (_sort_key = ? AND username > ?))`;
-      parameters.push(cursor.k, cursor.k, cursor.u);
+      secondary = `(_sort_key IS NULL OR _sort_key ${comparison} ? OR (_sort_key = ? AND username > ?))`;
+      tail.push(cursor.k, cursor.k, cursor.u);
     }
+    continuation = ' WHERE (_relevance > ? OR (_relevance = ? AND ' + secondary + '))';
+    parameters.push(cursor.r, cursor.r, ...tail);
   }
-  const sql = 'WITH ranked AS (SELECT creator.*, (' + expression + ') AS _sort_key FROM creator' +
-    (where.length ? ' WHERE ' + where.join(' AND ') : '') + ') SELECT * FROM ranked' + continuation +
-    ' ORDER BY (_sort_key IS NULL) ASC, _sort_key ' + SORTS[sort].direction + ', username ASC LIMIT ' + (PAGE_SIZE + 1);
+  const sql = 'WITH ' + ctes.join(', ') + ' SELECT * FROM ranked' + continuation +
+    ' ORDER BY _relevance ASC, (_sort_key IS NULL) ASC, _sort_key ' + SORTS[sort].direction + ', username ASC LIMIT ' + (PAGE_SIZE + 1);
+
   const result = await db.prepare(sql).bind(...parameters).all();
   const rows = result.results.slice(0, PAGE_SIZE);
   const last = rows.at(-1);
-  const next = result.results.length > PAGE_SIZE ? encodeCursor({ v: 1, q, s: sort, seed, k: last._sort_key, u: last.username }) : null;
+  const next = result.results.length > PAGE_SIZE ? encodeCursor({ v: 2, r: last._relevance, q, s: sort, seed, k: last._sort_key, u: last.username }) : null;
   return { rows, next };
 }
 function continuationUrl(path, state, cursor) {
