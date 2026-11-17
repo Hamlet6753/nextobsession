@@ -43,7 +43,8 @@ export function filterPlan(filters, columns) {
     for(const sep of ['\t','\n','\r','.',',','_','-','/','\\','|',':',';','!','?','(',')','[',']','{','}','"',"'",'@','+','&']) words=`replace(${words}, ${literal(sep)}, ' ')`;
     for(let i=0;i<7;i++)words=`replace(${words}, '  ', ' ')`;
     ctes.push(`filter_text AS (SELECT FILTER_SOURCE.*, lower(COALESCE(bio,'')) AS _filter_bio, (' ' || trim(${words}) || ' ') AS _filter_words FROM FILTER_SOURCE)`);
-    conditions.push(`NOT EXISTS (SELECT 1 FROM json_each(input.category_rules) AS filter_group WHERE NOT EXISTS (SELECT 1 FROM json_each(filter_group.value) AS keyword WHERE CASE json_extract(keyword.value,'$.mode') WHEN 'contains' THEN instr(_filter_bio,json_extract(keyword.value,'$.term')) > 0 ELSE _filter_words GLOB ('*[^a-z0-9À-ʯͰ-ϿЀ-ԯ]' || json_extract(keyword.value,'$.words') || '[^a-z0-9À-ʯͰ-ϿЀ-ԯ]*') END))`);
+    // English keyword boundaries: keep GLOB patterns below D1's 50-byte limit.
+    conditions.push(`NOT EXISTS (SELECT 1 FROM json_each(input.category_rules) AS filter_group WHERE NOT EXISTS (SELECT 1 FROM json_each(filter_group.value) AS keyword WHERE CASE json_extract(keyword.value,'$.mode') WHEN 'contains' THEN instr(_filter_bio,json_extract(keyword.value,'$.term')) > 0 ELSE _filter_words GLOB ('*[^a-z0-9]' || json_extract(keyword.value,'$.words') || '[^a-z0-9]*') END))`);
     // Canonicalize keyword boundaries in JS once instead of SQL for every row.
     bindings[0]=JSON.stringify([...selected.values()].map(rules=>rules.map(rule=>({...rule,words:rule.term.replace(/[^\p{L}\p{N}]+/gu,' ').trim()}))));
   }
