@@ -314,6 +314,14 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "teeni tiny",
+            "mode": "word"
+          },
+          {
+            "term": "tiny",
+            "mode": "word"
+          },
+          {
             "term": "flat chest",
             "mode": "word"
           },
