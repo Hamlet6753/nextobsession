@@ -1,0 +1,25 @@
+.age-gate {
+  width: min(480px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 36px 28px 28px;
+  border: 1px solid #ff728f66;
+  border-radius: 22px;
+  background: #19191f;
+  color: #fafafa;
+  text-align: center;
+  box-shadow: 0 0 60px #ff728f1a, 0 24px 80px #000;
+}
+.age-gate::backdrop { background: #08080bf5; }
+.age-gate-logo { display: block; margin: 0 auto 20px; object-fit: contain; }
+.age-gate h2 { margin: 0 0 16px; font-size: 28px; }
+.age-gate p { margin: 0; font-size: 15px; }
+.age-gate strong { color: #fafafa; }
+.age-gate p a { color: #ff728f; text-decoration: underline; }
+.age-gate-actions { display: flex; gap: 12px; margin-top: 28px; }
+.age-gate-actions > * { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 14px 12px; }
+html.age-gate-open { overflow: hidden; }
+@media (max-width: 380px) {
+  .age-gate { padding: 28px 20px 22px; }
+  .age-gate-actions { flex-direction: column; }
+}

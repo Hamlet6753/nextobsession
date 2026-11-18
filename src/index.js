@@ -1,4 +1,4 @@
-import { robotsResponse, sitemapResponse } from './services/seo.js';
+import { productionUrl, robotsResponse, sitemapResponse } from './services/seo.js';
 import { informationPage } from './pages/information.js';
 import { contactPage } from './pages/contact.js';
 import { contactAddress } from './routes/contact.js';
@@ -26,6 +26,10 @@ export default {
         return await env.ASSETS.fetch(request);
       }
       if(path==='/robots.txt')return robotsResponse(url);
+      if(path==='/llms.txt'){
+        if(!productionUrl(url))return new Response('Not found',{status:404,headers:{'X-Robots-Tag':'noindex'}});
+        return await env.ASSETS.fetch(request);
+      }
       if(path==='/sitemap.xml')return await sitemapResponse(url,env);
       if(path==='/contact')return contactPage(url,env);
       const information=informationPage(path,url,env);if(information)return information;

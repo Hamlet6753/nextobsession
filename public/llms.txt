@@ -1,0 +1,24 @@
+# NextObsession.fans
+
+> An independent directory for discovering adult creators through publicly available profile information. For adults aged 18 and over.
+
+NextObsession is not affiliated with OnlyFans. The directory presents public profile information and links to creators' own pages. It does not provide access to private or subscriber-only content.
+
+Profile biographies, locations, images, subscription prices and statistics may change or be incomplete. Category filters use keyword matches and do not independently verify personal attributes or content. Missing subscription prices may be displayed as FREE; this is not confirmation of a creator's current subscription price. Check the creator's own page for current details.
+
+## Main pages
+
+- [Discover creators](https://nextobsession.fans/): Search and browse public creator profiles.
+- [About](https://nextobsession.fans/about): Information about the directory.
+- [Contact](https://nextobsession.fans/contact): Contact information protected by human verification.
+- [Removal requests](https://nextobsession.fans/removal): Information about requesting profile removal.
+
+## Policies
+
+- [Terms](https://nextobsession.fans/terms): Terms of use.
+- [Privacy](https://nextobsession.fans/privacy): Privacy information.
+
+## Technical resources
+
+- [Sitemap](https://nextobsession.fans/sitemap.xml): A selected set of public URLs, not a complete profile export.
+- [Robots](https://nextobsession.fans/robots.txt): Crawler access rules.
