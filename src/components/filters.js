@@ -1,7 +1,7 @@
 import { escape } from '../lib/html.js';
 import { CATEGORY_GROUPS, byId, filterParams } from '../services/filters.js';
 function stateUrl(state, filters) {
-  return '/?' + filterParams(filters, new URLSearchParams({q:state.q,sort:state.sort}));
+  return '/?' + filterParams(filters, new URLSearchParams({q:state.q}));
 }
 export function filterPanel(state) {
   const selected=new Set(state.filters.categories);

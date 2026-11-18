@@ -251,7 +251,7 @@ export const CATEGORY_GROUPS = [
     "items": [
       {
         "id": "age-18-plus",
-        "label": "18+",
+        "label": "Teens 18+",
         "keywords": [
           {
             "term": "18 y.o.",
