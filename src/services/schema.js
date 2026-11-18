@@ -1,3 +1,4 @@
+import { DIRECTORY_FAQ } from '../config/faq.js';
 import { creatorPath, safeUrl } from '../lib/html.js';
 import { SITE_ORIGIN, canonicalUrl } from './seo.js';
 const SITE_ID=SITE_ORIGIN+'/#website';
@@ -7,7 +8,7 @@ const PAGE_TYPES={'/about':'AboutPage','/contact':'ContactPage'};
 export function serializeSchema(value) {
  return JSON.stringify(value).replace(/[<>&\u2028\u2029]/g,char=>({'<':'\\u003c','>':'\\u003e','&':'\\u0026','\u2028':'\\u2028','\u2029':'\\u2029'}[char]));
 }
-export function schemaGraph(title,{url,description='',directory=false,adult=false,creator,rows,state}={}) {
+export function schemaGraph(title,{url,description='',directory=false,adult=false,creator,rows,state,faq=false}={}) {
  const canonical=canonicalUrl(url,directory);
  const pageId=canonical+'#webpage';
  const graph=[
@@ -41,6 +42,11 @@ export function schemaGraph(title,{url,description='',directory=false,adult=fals
   const crumbsId=canonical+'#breadcrumb';
   graph.push({'@type':'BreadcrumbList','@id':crumbsId,itemListElement:[{'@type':'ListItem',position:1,name:'Home',item:SITE_ORIGIN+'/'},{'@type':'ListItem',position:2,name:title,item:canonical}]});
   page.breadcrumb={'@id':crumbsId};
+ }
+ if(faq){
+  const faqId=canonical+'#faq';
+  graph.push({'@type':'FAQPage','@id':faqId,url:faqId,name:'Frequently asked questions',isPartOf:{'@id':pageId},mainEntity:DIRECTORY_FAQ.map(item=>({'@type':'Question',name:item.question,acceptedAnswer:{'@type':'Answer',text:item.answer}}))});
+  page.hasPart={'@id':faqId};
  }
  graph.push(page);
  return {'@context':'https://schema.org','@graph':graph};

@@ -508,6 +508,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "throbbing surprise",
+            "mode": "word"
+          },          
+          {
             "term": "cuntboy",
             "mode": "word"
           },

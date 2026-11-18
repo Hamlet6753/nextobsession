@@ -1,0 +1,8 @@
+// Shared verbatim by server-rendered HTML and JSON-LD.
+export const DIRECTORY_FAQ = [
+ {question:'What is NextObsession.fans?',answer:'NextObsession.fans is an independent directory for discovering public creator profiles. You can explore names, biographies, profile images, public links and available subscription information. The service is intended for adults aged 18 and over.'},
+ {question:'How can I find a creator?',answer:'Enter a name, username or keyword in the search field. Search also checks available locations, biographies and website links. Use filters to narrow the results and choose a sorting option to change their order.'},
+ {question:'How do the category filters work?',answer:'Category filters match keywords in public biographies. They can return unrelated results and do not verify a person\'s identity, personal characteristics or available content. Check the original profile for accurate details.'},
+ {question:'Are subscription prices and profile statistics always up to date?',answer:'Prices, availability and statistics can change after a profile is collected. Some counters may be rounded. A FREE label can mean a known free subscription or that no price was available. Always check current prices and subscription terms on the original platform before paying.'},
+ {question:'Is NextObsession affiliated with OnlyFans, and can I request a correction or removal?',answer:'NextObsession is not affiliated with or endorsed by OnlyFans or the creators listed. To report an error or request removal of your profile or material, use the Contact or Remove a profile links in the footer. Include the profile URL and explain your relationship to the listing.'}
+];
