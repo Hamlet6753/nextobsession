@@ -27,11 +27,28 @@ try{
  assert((await (await fetchPage('/creator/thin')).text()).includes('content="noindex,follow"'));
  assert((await (await fetchPage('/creator/user000','https://preview.workers.dev')).text()).includes('content="noindex,follow"'));
  const home=await (await fetchPage('/')).text();assert(home.includes('content="index,follow"'));assert(home.includes('id="creator-sort"'));
- const serp=await (await fetchPage('/?category=fitness&sort=random&q=gym')).text();assert(!serp.includes('id="creator-sort"'));assert(serp.includes('content="noindex,follow"'));assert(!serp.includes('sort=random'));assert(serp.includes('Find someone worth following'));
+ const serp=await (await fetchPage('/?category=fitness&sort=random&q=gym')).text();assert(serp.includes('id="creator-sort"'));assert(serp.includes('content="noindex,follow"'));assert(!serp.includes('sort=random'));assert(serp.includes('Find someone worth following'));
  for(const query of ['q=gym','category=fitness','price=free','location=Paris'])assert.equal(directoryState(new URL(origin+'/?'+query+'&sort=random')).sort,'default');
  const found=[];let cursor=null;
  do{const u=new URL(origin+'/?category=fitness');if(cursor)u.searchParams.set('cursor',cursor);const state=directoryState(u);const page=await directoryPage(DB,state);found.push(...page.rows.map(r=>r.username));cursor=page.next;if(cursor)assert(!continuationUrl('/',state,cursor).includes('sort='));}while(cursor);
  assert.equal(found.length,65);assert.equal(new Set(found).size,65);assert.deepEqual(found,[...found].sort());
+
+ for(const sort of ['updated_asc','updated_desc','price_asc','price_desc','likes_asc','likes_desc','photos_asc','photos_desc','videos_asc','videos_desc']){
+  const all=[];let next=null;
+  do{
+   const url=new URL(origin+'/?category=fitness&sort='+sort);if(next)url.searchParams.set('cursor',next);
+   const state=directoryState(url);assert.equal(state.sort,sort);
+   const page=await directoryPage(DB,state);all.push(...page.rows);next=page.next;
+   if(next)assert(continuationUrl('/',state,next).includes('sort='+sort));
+  }while(next);
+  assert.equal(all.length,65);assert.equal(new Set(all.map(r=>r.username)).size,65);
+  if(sort==='likes_desc')assert.deepEqual(all.map(r=>r.likes),Array.from({length:65},(_,i)=>64-i));
+  if(sort==='likes_asc')assert.deepEqual(all.map(r=>r.likes),Array.from({length:65},(_,i)=>i));
+ }
+ const sortedHtml=await(await fetchPage('/?category=fitness&sort=likes_desc')).text();
+ assert(sortedHtml.includes('value="likes_desc" selected'));
+ assert(sortedHtml.includes('value="default"'));
+ assert(!sortedHtml.includes('value="random"'));
  const sitemap=await(await fetchPage('/sitemap.xml')).text();assert(sitemap.includes('/creator/user000'));assert(!sitemap.includes('/creator/thin'));assert(!sitemap.includes('category='));
  assert.equal((await fetchPage('/sitemap.xml','https://preview.workers.dev')).status,404);
  for(const path of ['/about','/privacy','/terms','/removal','/contact']){const r=await fetchPage(path);assert.equal(r.status,200);const html=await r.text();assert(html.includes('href="'+origin+path+'"'));assert(html.includes('footer-links'));}

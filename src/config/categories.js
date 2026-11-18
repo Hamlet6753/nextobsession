@@ -273,8 +273,16 @@ export const CATEGORY_GROUPS = [
             "term": "18yo",
             "mode": "word"
           },
+                    {
+            "term": "18y/o",
+            "mode": "word"
+          },
           {
             "term": "19 y.o.",
+            "mode": "word"
+          },
+                    {
+            "term": "19y/o",
             "mode": "word"
           },
           {
@@ -307,6 +315,10 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "20 yo",
+            "mode": "word"
+          },
+          {
+            "term": "20y/o",
             "mode": "word"
           },
           {

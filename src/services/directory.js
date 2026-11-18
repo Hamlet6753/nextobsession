@@ -40,8 +40,8 @@ function directoryState(url) {
   let filters;
   try { filters = readFilters(url); } catch (error) { throw new DirectoryInputError(error.message); }
   const isSerp = Boolean(q || filters.categories.length || filters.location || filters.price);
-  const requested = url.searchParams.get('sort') || 'random';
-  const sort = isSerp ? 'default' : requested;
+  const requested = url.searchParams.get('sort') || (isSerp ? 'default' : 'random');
+  const sort = isSerp && requested === 'random' ? 'default' : requested;
   if (!Object.hasOwn(SORTS, sort)) throw new DirectoryInputError('Unknown sorting option.');
   const cursor = url.searchParams.has('cursor') ? decodeCursor(url.searchParams.get('cursor')) : null;
   if (cursor && (cursor.q !== q || cursor.s !== sort || cursor.f !== filterKey(filters))) throw new DirectoryInputError('Search or sorting changed. Refresh the page.');
@@ -100,7 +100,7 @@ async function directoryPage(db, state) {
 }
 function continuationUrl(path, state, cursor) {
   const params=new URLSearchParams({q:state.q,cursor});
-  if(!state.isSerp)params.set('sort',state.sort);
+  if(state.sort!=='default')params.set('sort',state.sort);
   return path+'?'+filterParams(state.filters,params);
 }
 
