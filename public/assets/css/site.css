@@ -400,3 +400,6 @@ footer {
 .faq-list li::marker { color: #ff728f; font-weight: 700; }
 .faq-list h3 { margin: 0 0 8px; font-size: 18px; line-height: 1.5; }
 .faq-list p { margin: 0; color: #aaaab5; line-height: 1.7; max-width: 900px; }
+
+.nav-discovery { color: #ff728f; font-weight: 700; font-size: 14px; white-space: nowrap; }
+@media(max-width:380px) { .nav { padding-inline: 14px; gap: 10px; } .nav .brand { font-size: 17px; } .nav .brand-icon { width: 30px; height: 30px; margin-right: 6px; } .nav-discovery { font-size: 12px; } }

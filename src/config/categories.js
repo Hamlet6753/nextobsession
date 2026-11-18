@@ -414,6 +414,42 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "dumb",
+            "mode": "word"
+          },
+          {
+            "term": "drooly",
+            "mode": "word"
+          },
+          {
+            "term": "puppy",
+            "mode": "word"
+          },
+          {
+            "term": "pet",
+            "mode": "word"
+          },
+          {
+            "term": "boot",
+            "mode": "word"
+          },
+          {
+            "term": "bark",
+            "mode": "word"
+          },
+          {
+            "term": "barking",
+            "mode": "word"
+          },
+          {
+            "term": "fart",
+            "mode": "word"
+          },
+          {
+            "term": "farting",
+            "mode": "word"
+          },
+          {
             "term": "armpit",
             "mode": "word"
           },
@@ -446,6 +482,14 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "foot",
+            "mode": "word"
+          },
+          {
+            "term": "footfetish",
+            "mode": "word"
+          },
+          {
             "term": "footjob",
             "mode": "word"
           },
@@ -475,11 +519,41 @@ export const CATEGORY_GROUPS = [
         ]
       },
       {
+        "id": "dick-rating",
+        "label": "Dick Rating",
+        "keywords": [
+          {
+            "term": "dick rating",
+            "mode": "word"
+          },
+          {
+            "term": "dick ratings",
+            "mode": "word"
+          },
+          {
+            "term": "cock ratings",
+            "mode": "word"
+          }
+        ]
+      },
+      {
         "id": "big-ass",
         "label": "Big Ass",
         "keywords": [
           {
             "term": "big ass",
+            "mode": "word"
+          },
+          {
+            "term": "juicy ass",
+            "mode": "word"
+          },
+          {
+            "term": "twerk",
+            "mode": "word"
+          },
+          {
+            "term": "twerking",
             "mode": "word"
           },
           {
@@ -1030,6 +1104,14 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "gamer",
+            "mode": "word"
+          },
+          {
+            "term": "VTuber",
+            "mode": "word"
+          },
+          {
+            "term": "pet",
             "mode": "word"
           },
           {

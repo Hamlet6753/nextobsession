@@ -1,0 +1,15 @@
+.random-photos { max-width: 940px; margin: 36px auto; }
+.random-photos-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.random-photos h1 { font-size: clamp(32px, 6vw, 48px); }
+#random-photo-more { min-width: 110px; }
+#random-photo-more:disabled { opacity: .6; cursor: wait; }
+.random-photo-frame { margin: 0; padding: 16px; background: #19191f; border: 1px solid #30303a; border-radius: 22px; }
+.random-photo-frame img { display: block; width: 100%; height: clamp(260px, 65vh, 720px); object-fit: contain; background: #101014; border-radius: 12px; }
+.random-photo-frame img[hidden] { display: none; }
+.random-photo-frame figcaption { text-align: center; padding: 20px 8px 8px; font-size: 22px; font-weight: 700; overflow-wrap: anywhere; }
+#random-photo-creator { color: #ff728f; text-decoration: underline; text-underline-offset: 4px; }
+.random-photo-status { min-height: 26px; text-align: center; }
+@media(max-width:560px) {
+  .random-photo-frame { padding: 10px; }
+  .random-photos-heading { gap: 12px; }
+}
