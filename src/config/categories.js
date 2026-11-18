@@ -274,7 +274,29 @@ export const CATEGORY_GROUPS = [
         ]
       },
       {
-        "id": "Tatooed",
+        "id": "femdom",
+        "label": "Femdom",
+        "keywords": [
+          {
+            "term": "femdom",
+            "mode": "word"
+          },
+          {
+            "term": "findom",
+            "mode": "word"
+          },
+          {
+            "term": "spender",
+            "mode": "word"
+          },
+          {
+            "term": "spend",
+            "mode": "word"
+          }
+        ]
+      },
+      {
+        "id": "tatooed",
         "label": "Tattooed",
         "keywords": [
           {
@@ -306,11 +328,33 @@ export const CATEGORY_GROUPS = [
         ]
       },
       {
+        "id": "blonde",
+        "label": "Blonde",
+        "keywords": [
+          {
+            "term": "blonde",
+            "mode": "word"
+          },
+          {
+            "term": "blond",
+            "mode": "word"
+          }
+        ]
+      },
+      {
         "id": "small-tits",
         "label": "Small tits",
         "keywords": [
           {
             "term": "small tits",
+            "mode": "word"
+          },
+          {
+            "term": "skinny",
+            "mode": "word"
+          },
+          {
+            "term": "skelet",
             "mode": "word"
           },
           {
@@ -370,6 +414,26 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "armpit",
+            "mode": "word"
+          },
+          {
+            "term": "roleplay",
+            "mode": "word"
+          },
+          {
+            "term": "vouyerism",
+            "mode": "word"
+          },
+          {
+            "term": "giantess",
+            "mode": "word"
+          },
+          {
+            "term": "voyeurism",
+            "mode": "word"
+          },
+          {
             "term": "glove",
             "mode": "word"
           },
@@ -424,6 +488,24 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "huge ass",
+            "mode": "word"
+          },
+          {
+            "term": "fat ass",
+            "mode": "word"
+          },
+          {
+            "term": "phat ass",
+            "mode": "word"
+          }
+          ]
+      },
+      {
+        "id": "asmr",
+        "label": "ASMR",
+        "keywords": [
+          {
+            "term": "asmr",
             "mode": "word"
           }
           ]
@@ -769,6 +851,10 @@ export const CATEGORY_GROUPS = [
             "mode": "contains"
           },
           {
+            "term": "cosplayer",
+            "mode": "contains"
+          },
+          {
             "term": "anim",
             "mode": "contains"
           },
@@ -859,6 +945,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "emo",
+            "mode": "word"
+          },
+          {
             "term": "cosplay",
             "mode": "word"
           },
@@ -888,6 +978,10 @@ export const CATEGORY_GROUPS = [
             "term": "athlete",
             "mode": "word"
           },
+          {
+            "term": "gymnast",
+            "mode": "word"
+          },          
           {
             "term": "bodybuilding",
             "mode": "word"
@@ -939,6 +1033,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "egirl",
+            "mode": "word"
+          },
+          {
             "term": "gamer girl",
             "mode": "word"
           },
@@ -968,6 +1066,14 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "xbox",
+            "mode": "word"
+          },
+          {
+            "term": "game",
+            "mode": "word"
+          },
+          {
+            "term": "video games",
             "mode": "word"
           }
         ]
