@@ -11,7 +11,7 @@
   if(form)form.addEventListener('submit',()=>{
     const query=form.querySelector('[name=q]');
     const active=Boolean(query?.value.trim() || form.querySelector('[name=category]:checked') || [...form.querySelectorAll('[name=location]')].some(el=>el.value.trim()) || form.querySelector('[name=price]:checked')?.value);
-    if(sort&&active)sort.disabled=true;
+    if(sort && (sort.value==='default' || (active && sort.value==='random')))sort.disabled=true;
   });
   if (!grid || !more || !sentinel) return;
   const seen = new Set([...grid.querySelectorAll('[data-username]')].map(el => el.dataset.username));
