@@ -381,3 +381,14 @@ footer {
 /* Brand icon beside the existing wordmark. */
 .brand { display: inline-flex; align-items: center; gap: 0; }
 .brand-icon { display: block; width: 40px; height: 40px; object-fit: contain; flex: 0 0 auto; margin-right: 10px; }
+
+.information-page { max-width: 820px; margin: 48px auto 72px; line-height: 1.7; overflow-wrap: anywhere; }
+.information-page h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.15; }
+.information-page h2 { margin-top: 32px; font-size: 23px; }
+.information-page p, .information-page li { color: #b9b9c5; }
+.information-page a { text-decoration: underline; }
+.information-page a.button { text-decoration: none; }
+.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 24px; margin-bottom: 20px; }
+.contact-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+#contact-reveal { margin: 28px 0; }
+#contact-reveal button { margin-top: 16px; }

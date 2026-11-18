@@ -2,6 +2,7 @@ import { readFilters, filterKey, filterParams, filterPlan } from './filters.js';
 import { searchPlan } from './search.js';
 const PAGE_SIZE = 24;
 const SORTS = {
+  default: { label: 'Default', direction: 'ASC' },
   random: { label: 'Random', direction: 'ASC' },
   updated_asc: { label: 'Oldest first', column: 'updated_at', direction: 'ASC' },
   updated_desc: { label: 'Newest first', column: 'updated_at', direction: 'DESC' },
@@ -38,12 +39,14 @@ function directoryState(url) {
   const q = (url.searchParams.get('q') || '').trim().slice(0, 80);
   let filters;
   try { filters = readFilters(url); } catch (error) { throw new DirectoryInputError(error.message); }
-  const sort = url.searchParams.get('sort') || 'random';
+  const isSerp = Boolean(q || filters.categories.length || filters.location || filters.price);
+  const requested = url.searchParams.get('sort') || 'random';
+  const sort = isSerp ? 'default' : requested;
   if (!Object.hasOwn(SORTS, sort)) throw new DirectoryInputError('Unknown sorting option.');
   const cursor = url.searchParams.has('cursor') ? decodeCursor(url.searchParams.get('cursor')) : null;
   if (cursor && (cursor.q !== q || cursor.s !== sort || cursor.f !== filterKey(filters))) throw new DirectoryInputError('Search or sorting changed. Refresh the page.');
   const seed = cursor ? cursor.seed : crypto.getRandomValues(new Uint32Array(1))[0] % 2147483646 + 1;
-  return { q, sort, cursor, seed, filters };
+  return { q, sort, cursor, seed, filters, isSerp };
 }
 async function directoryPage(db, state) {
   const { q, sort, seed, cursor } = state;
@@ -55,7 +58,9 @@ async function directoryPage(db, state) {
   const plan = searchPlan(q, columns, filters.candidates);
   const searching = plan.bindings.length > 0;
   const parameters = [seed, ...plan.bindings, ...filters.bindings];
-  if (sort === 'random') {
+  if (sort === 'default') {
+    expression = '0';
+  } else if (sort === 'random') {
     expression = searching ? '0' : '(((_creator_rowid % 2147483647) * (_creator_rowid % 2147483647)) % 2147483647 * input.seed) % 2147483647';
   } else if (sort === 'price_asc' || sort === 'price_desc') {
     expression = `CASE WHEN ${column('subscription_type')} = 'free' THEN 0 ELSE COALESCE(${column('subscription_current_price_cents')}, ${column('subscription_price_cents')}, 0) END`;
@@ -94,7 +99,9 @@ async function directoryPage(db, state) {
   return { rows, next };
 }
 function continuationUrl(path, state, cursor) {
-  return path + '?' + filterParams(state.filters, new URLSearchParams({ q: state.q, sort: state.sort, cursor }));
+  const params=new URLSearchParams({q:state.q,cursor});
+  if(!state.isSerp)params.set('sort',state.sort);
+  return path+'?'+filterParams(state.filters,params);
 }
 
 export { SORTS, DirectoryInputError, directoryState, directoryPage, continuationUrl };
