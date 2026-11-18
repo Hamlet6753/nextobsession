@@ -1,3 +1,5 @@
+import { randomPhotosPage } from './pages/random-photos.js';
+import { randomPhotoApi } from './services/random-photo.js';
 import { productionUrl, robotsResponse, sitemapResponse } from './services/seo.js';
 import { informationPage } from './pages/information.js';
 import { contactPage } from './pages/contact.js';
@@ -36,6 +38,8 @@ export default {
       if (path === '/health') return Response.json({ok:true});
       if (path === '/api/health') return await healthApi(env);
       if (path === '/api/creators') return await creatorApi(url, env);
+      if (path === '/api/random-photo') return await randomPhotoApi(url, env);
+      if (path === '/random-photos') return await randomPhotosPage(url, env);
       if (path === '/') return await homePage(url, env);
       const match = path.match(/^\/creator\/([a-zA-Z0-9_.-]{1,64})$/);
       if (match) return await creatorPage(match[1], env, url);
@@ -46,6 +50,7 @@ export default {
         return errorPage('Invalid request', 'Please refresh your search.', error.message, 400,url);
       }
       console.error('Request failed',error);
+      if (path === '/api/random-photo') return Response.json({error:'Could not load a photo.'},{status:503,headers:{'Cache-Control':'no-store'}});
       if (path === '/api/creators') return Response.json({error:'Could not load creators.'},{status:503,headers:{'Cache-Control':'no-store'}});
       if (path === '/api/health') return Response.json({ok:false,database:'unavailable'},{status:503,headers:{'Cache-Control':'no-store'}});
       return errorPage('Temporarily unavailable', 'Please try again shortly.', 'We could not load the directory.', 503,url);
