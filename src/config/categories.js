@@ -14,6 +14,14 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "backdoor",
+            "mode": "word"
+          },
+          {
+            "term": "DAP",
+            "mode": "word"
+          },
+          {
             "term": "anal",
             "mode": "word"
           },
@@ -194,6 +202,26 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "swallow",
+            "mode": "word"
+          },
+          {
+            "term": "i love cum",
+            "mode": "word"
+          },
+          {
+            "term": "cum shots",
+            "mode": "word"
+          },
+          {
+            "term": "cumshots",
+            "mode": "word"
+          },
+          {
+            "term": "cumshot",
+            "mode": "word"
+          },
+          {
             "term": "cumslut",
             "mode": "word"
           },
@@ -211,6 +239,18 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "facial",
+            "mode": "word"
+          },
+          {
+            "term": "cum on face",
+            "mode": "word"
+          },
+          {
+            "term": "blowjob",
+            "mode": "word"
+          },
+          {
+            "term": "blowjobs",
             "mode": "word"
           },
           {
@@ -234,11 +274,95 @@ export const CATEGORY_GROUPS = [
         ]
       },
       {
+        "id": "Tatooed",
+        "label": "Tattooed",
+        "keywords": [
+          {
+            "term": "tattoo",
+            "mode": "word"
+          },
+          {
+            "term": "ink",
+            "mode": "word"
+          },
+          {
+            "term": "inked",
+            "mode": "word"
+          }
+        ]
+      },
+      {
+        "id": "pregnant",
+        "label": "Pregnant",
+        "keywords": [
+          {
+            "term": "pregnant",
+            "mode": "word"
+          },
+          {
+            "term": "pregnancy",
+            "mode": "word"
+          }
+        ]
+      },
+      {
+        "id": "small-tits",
+        "label": "Small tits",
+        "keywords": [
+          {
+            "term": "small tits",
+            "mode": "word"
+          },
+          {
+            "term": "flat chest",
+            "mode": "word"
+          },
+          {
+            "term": "flat chested",
+            "mode": "word"
+          },
+          {
+            "term": "flat-chested",
+            "mode": "word"
+          },
+          {
+            "term": "small titties",
+            "mode": "word"
+          },
+          {
+            "term": "tiny",
+            "mode": "word"
+          }
+        ]
+      },
+      {
+        "id": "deep-throat",
+        "label": "Deep Throat",
+        "keywords": [
+          {
+            "term": "deep throat",
+            "mode": "word"
+          },
+          {
+            "term": "gagging",
+            "mode": "word"
+          },
+          {
+            "term": "swallow",
+            "mode": "word"
+          }
+        ]
+      },
+      {
         "id": "fetish",
         "label": "Fetish",
         "keywords": [
           {
             "term": "feet",
+            "mode": "word"
+          },
+          {
+            "term": "glove",
             "mode": "word"
           },
           {
@@ -252,6 +376,14 @@ export const CATEGORY_GROUPS = [
           {
             "term": "footjob",
             "mode": "word"
+          },
+          {
+            "term": "hairy",
+            "mode": "word"
+          },
+          {
+            "term": "fetish-friendly",
+            "mode": "word"
           }
         ]
       },
@@ -261,6 +393,59 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "joi",
+            "mode": "word"
+          },
+          {
+            "term": "voice",
+            "mode": "word"
+          }
+          
+        ]
+      },
+      {
+        "id": "big-ass",
+        "label": "Big Ass",
+        "keywords": [
+          {
+            "term": "big ass",
+            "mode": "word"
+          },
+          {
+            "term": "big butt",
+            "mode": "word"
+          },
+          {
+            "term": "huge ass",
+            "mode": "word"
+          }
+          ]
+      },
+      {
+        "id": "big-tits",
+        "label": "Big TITS",
+        "keywords": [
+          {
+            "term": "big tits",
+            "mode": "word"
+          },
+          {
+            "term": "big boobs",
+            "mode": "word"
+          },
+          {
+            "term": "big titties",
+            "mode": "word"
+          },
+          {
+            "term": "huge tits",
+            "mode": "word"
+          },
+          {
+            "term": "huge titties",
+            "mode": "word"
+          },
+          {
+            "term": "milky",
             "mode": "word"
           }
         ]
@@ -830,6 +1015,15 @@ export const CATEGORY_GROUPS = [
           {
             "term": "gangbang",
             "mode": "word"
+          },
+          
+          {
+            "term": "group scenes",
+            "mode": "word"
+          },
+          {
+            "term": "group sex",
+            "mode": "word"
           }
         ]
       },
@@ -849,6 +1043,50 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "orgy",
+            "mode": "word"
+          },
+          {
+            "term": "swing",
+            "mode": "word"
+          },
+          {
+            "term": "swinger",
+            "mode": "word"
+          },
+          {
+            "term": "swingers",
+            "mode": "word"
+          },
+          {
+            "term": "orgies",
+            "mode": "word"
+          },
+          {
+            "term": "3somes",
+            "mode": "word"
+          },
+          {
+            "term": "3some",
+            "mode": "word"
+          },
+          {
+            "term": "MFM",
+            "mode": "word"
+          },
+          {
+            "term": "FMF",
+            "mode": "word"
+          },
+          {
+            "term": "group scenes",
+            "mode": "word"
+          },
+          {
+            "term": "sodomy",
+            "mode": "word"
+          },
+          {
+            "term": "group sex",
             "mode": "word"
           }
         ]
