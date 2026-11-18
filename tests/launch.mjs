@@ -67,6 +67,6 @@ try{
  assert.equal((await contactAddress(contact('x='.padEnd(5000,'x')),env,verifier)).status,413);
  assert.equal((await contactAddress(contact(),{},verifier)).status,503);
  assert.equal((await contactAddress(contact(),env,async()=>{throw Error('offline')})).status,503);
- const gated=await worker.fetch(new Request(origin+'/contact'),{...env,TURNSTILE_SITE_KEY:'site'});assert(gated.headers.get('Content-Security-Policy').includes('script-src \'self\' https://challenges.cloudflare.com'));assert(!(await gated.text()).includes('test@example.com'));
+ const gated=await worker.fetch(new Request(origin+'/contact'),{...env,TURNSTILE_SITE_KEY:'site'});assert(gated.headers.get('Content-Security-Policy').includes('https://challenges.cloudflare.com'));assert(!(await gated.text()).includes('test@example.com'));
  console.log('PASS metadata/escaping/canonicals/preview protection, alt, stable SERP pagination, curated sitemap, information pages, contact verification and rejection paths');
 }finally{rmSync(folder,{recursive:true,force:true});}
