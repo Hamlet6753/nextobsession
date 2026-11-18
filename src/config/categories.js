@@ -88,6 +88,10 @@ export const CATEGORY_GROUPS = [
           {
             "term": "third hole",
             "mode": "word"
+          },
+          {
+            "term": "anal fisting",
+            "mode": "word"
           }
         ]
       },
@@ -188,6 +192,34 @@ export const CATEGORY_GROUPS = [
           {
             "term": "cum",
             "mode": "word"
+          },
+          {
+            "term": "cumslut",
+            "mode": "word"
+          },
+          {
+            "term": "bukkakee",
+            "mode": "word"
+          },
+          {
+            "term": "sperm",
+            "mode": "word"
+          },
+          {
+            "term": "sperma",
+            "mode": "word"
+          },
+          {
+            "term": "facial",
+            "mode": "word"
+          },
+          {
+            "term": "cumshot",
+            "mode": "word"
+          },
+          {
+            "term": "creampie",
+            "mode": "word"
           }
         ]
       },
@@ -239,6 +271,16 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "nudist",
+            "mode": "word"
+          }
+        ]
+      },
+      {
+        "id": "nudist",
+        "label": "Nudist",
+        "keywords": [
+          {
+            "term": "public",
             "mode": "word"
           }
         ]
