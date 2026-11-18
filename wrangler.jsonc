@@ -1,6 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nextobsession",
+  "vars": {
+  "SITE_OPERATOR_NAME": "Andrii Khomenko"
+},
   "assets": {
   "directory": "./public",
   "binding": "ASSETS",
