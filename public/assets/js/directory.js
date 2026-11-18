@@ -9,7 +9,7 @@
   if (!grid || !more || !sentinel) return;
   const seen = new Set([...grid.querySelectorAll('[data-username]')].map(el => el.dataset.username));
   let busy = false, failed = false, observer = null;
-  const updateCount = () => { if (count) count.textContent = seen.size + ' creators loaded'; };
+
   function finish() {
     more.hidden = true;
     if (observer) observer.disconnect();
