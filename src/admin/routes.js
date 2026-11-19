@@ -1,6 +1,6 @@
 import { adminPage } from './page.js';
 import { AdminInputError, loadRecord, saveRecord, username, clean } from './records.js';
-import { scrapeProfile } from './scrape.js';
+import { browserCheck, scrapeProfile } from './scrape.js';
 const encoder = new TextEncoder();
 const json = (data,status=200) => Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'}});
 async function authorized(request, secret) {
@@ -28,6 +28,9 @@ export async function adminRoute(request,env, scrape=scrapeProfile) {
   try {
     if(request.method==='GET'&&['/admin','/admin/import'].includes(url.pathname))return adminPage();
     if(request.method==='GET'&&url.pathname==='/admin/api/creator')return json({record:await loadRecord(env.DB,url.searchParams.get('username'))});
+    if(request.method==='POST'&&url.pathname==='/admin/api/browser-check'){
+      await body(request);return json(await browserCheck(env.BROWSER));
+    }
     if(request.method==='POST'&&url.pathname==='/admin/api/scrape'){
       const input=await body(request);const handle=username(input.username);
       const existing=await loadRecord(env.DB,handle);
@@ -36,7 +39,7 @@ export async function adminRoute(request,env, scrape=scrapeProfile) {
       // Failed/missing scraped fields never erase previously stored values.
       const fields=Object.fromEntries(Object.entries(result.record).filter(([k,v])=>v!=null&&v!==''&&k!=='age'&&k!=='gender'));
       const record={...(existing||{}),...fields,age:existing?.age??null,gender:existing?.gender??null};
-      return json({status:'public_profile',exists:Boolean(existing),record:JSON.parse(clean(JSON.stringify(record)))});
+      return json({status:'public_profile',exists:Boolean(existing),record:JSON.parse(clean(JSON.stringify(record))),diagnostics:result.diagnostics});
     }
     if(request.method==='POST'&&url.pathname==='/admin/api/save'){
       const input=await body(request);const record=await saveRecord(env.DB,input.record,input.mode);return json({saved:true,record});

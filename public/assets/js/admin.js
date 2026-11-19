@@ -27,6 +27,14 @@
     if(!response.ok)throw Error(data.error||'Request failed.');return data;
   }
   function normalized(value){let text=value.trim();if(/^https?:/i.test(text)){const url=new URL(text);if(!['onlyfans.com','www.onlyfans.com'].includes(url.hostname))throw Error('Only OnlyFans URLs are allowed.');text=url.pathname.replace(/^\/+|\/+$/g,'');}text=text.replace(/^@/,'').toLowerCase();if(!/^[a-z0-9_.-]{1,64}$/.test(text))throw Error('Invalid username: '+value);return '@'+text;}
+  function showDiagnostics(parent,data){
+    if(!data)return;const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');
+    summary.textContent='Diagnostics';pre.textContent=JSON.stringify(data,null,2);pre.style.whiteSpace='pre-wrap';pre.style.overflowWrap='anywhere';details.append(summary,pre);parent.append(details);
+  }
+  $('admin-browser-check').addEventListener('click',async()=>{
+    if(importing)return;const button=$('admin-browser-check');button.disabled=true;$('admin-status').textContent='Testing cloud browser...';
+    try{const result=await request('browser-check',{});const item=document.createElement('li');item.textContent=result.status+(result.error?' - '+result.error:'');showDiagnostics(item,result.diagnostics);$('admin-results').append(item);$('admin-status').textContent=result.status==='browser_ok'?'Cloud browser is working. You can now test one profile.':'Browser check failed. Open Diagnostics.';}catch(error){$('admin-status').textContent=error.message;}finally{button.disabled=false;}
+  });
   $('admin-import').addEventListener('click',async()=>{
     if(importing)return;let names;
     try{names=[...new Set($('admin-usernames').value.split(/[\s,;]+/).filter(Boolean).map(normalized))];if(!names.length||names.length>5)throw Error('Enter 1 to 5 profiles.');}catch(error){$('admin-status').textContent=error.message;return;}
@@ -35,6 +43,7 @@
       $('admin-status').textContent='Importing '+(i+1)+' / '+names.length+': '+names[i];const item=document.createElement('li');$('admin-results').append(item);
       let result;try{result=await request('scrape',{username:names[i]});}catch(error){item.textContent=names[i]+': '+error.message;stop=true;$('admin-status').textContent='Stopped after an error.';break;}
       item.textContent=names[i]+': '+result.status+(result.error?' - '+result.error:'');
+      showDiagnostics(item,result.diagnostics);
       if(result.record){const button=document.createElement('button');button.type='button';button.textContent=result.exists?'Review existing':'Review draft';button.addEventListener('click',()=>{if(canReplace())edit(result.record,result.exists);});item.append(button);}
       if(['blocked','rate_limited'].includes(result.status)){stop=true;$('admin-status').textContent='Stopped at access restriction.';}
     }if(!stop)$('admin-status').textContent='Import finished. Review and save each profile.';else if($('admin-status').textContent.startsWith('Stopping'))$('admin-status').textContent='Stopped.';
