@@ -1,3 +1,4 @@
+import { cachedQuery } from './query-cache.js';
 import { readFilters, filterKey, filterParams, filterPlan } from './filters.js';
 import { searchPlan } from './search.js';
 const PAGE_SIZE = 24;
@@ -50,7 +51,7 @@ function directoryState(url) {
 }
 async function directoryPage(db, state) {
   const { q, sort, seed, cursor } = state;
-  const fields = await db.prepare('PRAGMA table_info(creator)').all();
+  const fields = await cachedQuery(db,'schema-v1',60000,()=>db.prepare('PRAGMA table_info(creator)').all());
   const columns = new Set(fields.results.map(field => field.name));
   const column = name => columns.has(name) ? '"' + name + '"' : 'NULL';
   let expression;
@@ -92,7 +93,8 @@ async function directoryPage(db, state) {
   const sql = 'WITH ' + ctes.join(', ') + ' SELECT * FROM ranked' + continuation +
     ' ORDER BY _image_priority ASC, _relevance ASC, (_sort_key IS NULL) ASC, _sort_key ' + SORTS[sort].direction + ', username ASC LIMIT ' + (PAGE_SIZE + 1);
 
-  const result = await db.prepare(sql).bind(...parameters).all();
+  const cacheKey = JSON.stringify([sql, sort === 'random' ? parameters : [0, ...parameters.slice(1)]]);
+  const result = await cachedQuery(db, cacheKey, 60000, () => db.prepare(sql).bind(...parameters).all());
   const rows = result.results.slice(0, PAGE_SIZE);
   const last = rows.at(-1);
   const next = result.results.length > PAGE_SIZE ? encodeCursor({ v: 4, f: filterKey(state.filters), m: last._image_priority, r: last._relevance, q, s: sort, seed, k: last._sort_key, u: last.username }) : null;

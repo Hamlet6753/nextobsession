@@ -9,10 +9,11 @@
   const previous = dialog.querySelector('.lightbox-prev');
   const next = dialog.querySelector('.lightbox-next');
   const counter = dialog.querySelector('.lightbox-counter');
-  const reset = dialog.querySelector('.lightbox-reset');
-  const levels = [1, 1.5, 2, 3, 4];
+  const zoom = dialog.querySelector('.lightbox-zoom');
+  const levels = [1, 2, 3, 4];
   let activeImage = null, opener = null, previousOverflow = '', gallery = [], index = 0;
   let zoomIndex = 0, offsetX = 0, offsetY = 0, baseWidth = 0, baseHeight = 0, loaded = false, gesture = null;
+  let ignoreOverlayClickUntil = 0;
   function validUrl(value) {
     try { const url = new URL(value); return ['https:', 'http:'].includes(url.protocol) ? url.href : null; }
     catch { return null; }
@@ -33,15 +34,14 @@
       activeImage.setAttribute('aria-label', 'Image zoom ' + Math.round(scale * 100) + ' percent. Click or press Enter to zoom; after 400 percent, return to fit.');
     }
     stage.classList.toggle('is-zoomed', zoomIndex > 0);
-    reset.disabled = !loaded || zoomIndex === 0;
-    reset.textContent = 'Reset ' + Math.round(scale * 100) + '%';
+    zoom.textContent = Math.round(scale * 100) + '%';
   }
   function resetZoom() {
     stopDrag(); zoomIndex = 0; offsetX = offsetY = 0; applyZoom();
   }
   function fitImage() {
     if (!loaded || !activeImage || !stage.clientWidth || !stage.clientHeight) return;
-    const ratio = Math.min(1, Math.max(1, stage.clientWidth - 32) / activeImage.naturalWidth, Math.max(1, stage.clientHeight - 32) / activeImage.naturalHeight);
+    const ratio = Math.min(stage.clientWidth / activeImage.naturalWidth, stage.clientHeight / activeImage.naturalHeight);
     baseWidth = activeImage.naturalWidth * ratio;
     baseHeight = activeImage.naturalHeight * ratio;
     activeImage.style.width = baseWidth + 'px';
@@ -101,7 +101,6 @@
     if (opener && opener.isConnected) opener.focus({preventScroll:true}); opener = null;
   });
   close.addEventListener('click', () => dialog.close());
-  reset.addEventListener('click', resetZoom);
   previous.addEventListener('click', () => move(-1));
   next.addEventListener('click', () => move(1));
   dialog.addEventListener('keydown', event => {
@@ -110,15 +109,23 @@
     }
   });
   dialog.addEventListener('click', event => {
-    if (event.target !== dialog) return;
-    const b = dialog.getBoundingClientRect();
-    if (event.clientX < b.left || event.clientX > b.right || event.clientY < b.top || event.clientY > b.bottom) dialog.close();
+    if (Date.now() < ignoreOverlayClickUntil) return;
+    if (event.target === dialog || event.target === stage || event.target.classList?.contains('lightbox-frame')) dialog.close();
   });
+  stage.addEventListener('wheel', event => {
+    if (!dialog.open || !loaded || zoomIndex === 0 || event.ctrlKey) return;
+    event.preventDefault();
+    stopDrag();
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? stage.clientHeight : 1;
+    const dx = event.shiftKey && !event.deltaX ? event.deltaY : event.deltaX;
+    const dy = event.shiftKey && !event.deltaX ? 0 : event.deltaY;
+    offsetX -= dx * unit; offsetY -= dy * unit;
+    applyZoom();
+  }, {passive:false});
   stage.addEventListener('pointerdown', event => {
     if (!loaded || !event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
-    if (zoomIndex === 0 && event.target !== activeImage) return;
     stopDrag();
-    gesture = {id:event.pointerId, x:event.clientX, y:event.clientY, startX:offsetX, startY:offsetY, moved:false, touch:event.pointerType === 'touch'};
+    gesture = {id:event.pointerId, x:event.clientX, y:event.clientY, startX:offsetX, startY:offsetY, moved:false, touch:event.pointerType === 'touch', onImage:event.target === activeImage};
     stage.setPointerCapture(event.pointerId);
     if (event.pointerType === 'mouse') event.preventDefault();
   });
@@ -136,7 +143,10 @@
     const current = gesture, dx = event.clientX - current.x, dy = event.clientY - current.y;
     const moved = current.moved || Math.hypot(dx, dy) > 5;
     stopDrag();
-    if (!moved) cycleZoom(event.clientX, event.clientY);
+    // Pointer capture can retarget the subsequent click to the overlay.
+    ignoreOverlayClickUntil = Date.now() + 400;
+    if (!moved && current.onImage) cycleZoom(event.clientX, event.clientY);
+    else if (!moved) dialog.close();
     else if (zoomIndex === 0 && current.touch && Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.4) move(dx < 0 ? 1 : -1);
   });
   stage.addEventListener('pointercancel', stopDrag);
@@ -146,7 +156,7 @@
   document.addEventListener('click', event => {
     const button = event.target.closest('button[data-image-url]');
     if (!button || !validUrl(button.dataset.imageUrl)) return;
-    const scope = button.closest('.profile-box'); if (!scope) return;
+    const scope = button.closest('.profile-box, [data-image-gallery]'); if (!scope) return;
     const buttons = [...scope.querySelectorAll('button[data-image-url]')];
     gallery = buttons.map(el => ({url:validUrl(el.dataset.imageUrl),title:el.dataset.imageTitle || 'Image preview',element:el})).filter(item => item.url);
     index = gallery.findIndex(item => item.element === button); if (index < 0) return;
