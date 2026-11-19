@@ -1,0 +1,16 @@
+.admin-page { max-width: 1000px; padding-block: 30px 70px; }
+.admin-page h1 { font-size: 40px; }
+.admin-panel { padding: 24px; margin: 24px 0; border: 1px solid #30303a; border-radius: 18px; background: #19191f; }
+.admin-panel h2 { margin-top: 0; }
+.admin-page input,.admin-page textarea,.admin-page select { width: 100%; padding: 12px; background: #101014; border: 1px solid #393942; color: #fafafa; border-radius: 8px; font: inherit; }
+.admin-page label { display: block; margin-bottom: 6px; color: #ccc; font-size: 14px; }
+.admin-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 16px; }
+.admin-actions a { color: #ff728f; text-decoration: underline; }
+.admin-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+.admin-field-wide { grid-column: 1 / -1; }
+.admin-page button:disabled { opacity: .5; cursor: wait; }
+#admin-results { padding-left: 20px; }
+#admin-results li { margin: 10px 0; }
+#admin-results button { padding: 7px 12px; margin-left: 12px; }
+.admin-page [hidden] { display: none; }
+@media(max-width:600px) { .admin-fields { grid-template-columns: 1fr; } .admin-panel { padding: 18px; } }

@@ -953,6 +953,10 @@ export const CATEGORY_GROUPS = [
             "mode": "contains"
           },
           {
+            "term": "waifu",
+            "mode": "contains"
+          },
+          {
             "term": "cosplayer",
             "mode": "contains"
           },
@@ -1056,6 +1060,10 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "emo",
+            "mode": "word"
+          },
+          {
+            "term": "waifu",
             "mode": "word"
           },
           {

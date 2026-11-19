@@ -2,17 +2,19 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nextobsession",
   "vars": {
-  "SITE_OPERATOR_NAME": "Andrii Khomenko"
-},
+    "SITE_OPERATOR_NAME": "Andrii Khomenko"
+  },
   "assets": {
-  "directory": "./public",
-  "binding": "ASSETS",
-  "run_worker_first": ["/robots.txt", "/llms.txt"]
-},
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/robots.txt",
+      "/llms.txt"
+    ]
+  },
   "main": "src/index.js",
   "compatibility_date": "2026-11-16",
   "workers_dev": true,
-  
   "routes": [
     {
       "pattern": "nextobsession.fans",
@@ -33,5 +35,11 @@
         "database_id": "3fb99811-2e01-4a3f-a2ff-1af5b4e99793"
       }
     ]
-  }
+  },
+  "browser": {
+    "binding": "BROWSER"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
 }
