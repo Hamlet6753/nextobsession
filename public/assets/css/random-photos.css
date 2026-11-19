@@ -13,3 +13,6 @@
   .random-photo-frame { padding: 10px; }
   .random-photos-heading { gap: 12px; }
 }
+
+.random-photo-open { height: auto; border-radius: 12px; }
+.random-photo-open[hidden] { display: none; }

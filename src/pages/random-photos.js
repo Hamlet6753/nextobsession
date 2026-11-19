@@ -7,8 +7,11 @@ export async function randomPhotosPage(url, env) {
   const photo = await randomPhoto(env.DB);
   const content = `<section class="random-photos" aria-labelledby="random-photos-title">
     <div class="random-photos-heading"><div><a class="back" href="/">Back to discovery</a><h1 id="random-photos-title">Random Photos</h1></div><button type="button" id="random-photo-more">More</button></div>
-    <figure class="random-photo-frame" id="random-photo-frame" aria-busy="false">
-      ${photo ? `<img id="random-photo-image" src="${escape(photo.image_url)}" alt="${escape(photo.name)}" referrerpolicy="no-referrer">` : '<img id="random-photo-image" alt="" hidden>'}
+    <figure class="random-photo-frame" id="random-photo-frame" data-image-gallery aria-busy="false">
+      <button type="button" class="photo-open random-photo-open" id="random-photo-open" aria-haspopup="dialog" ${photo ? `data-image-url="${escape(photo.image_url)}" data-image-title="${escape(photo.name)}" aria-label="${escape('Open '+photo.name)}"` : 'hidden'}>
+        ${photo ? `<img id="random-photo-image" src="${escape(photo.image_url)}" alt="${escape(photo.name)}" referrerpolicy="no-referrer">` : '<img id="random-photo-image" alt="" hidden>'}
+        <span class="photo-hint" aria-hidden="true">View image</span>
+      </button>
       <figcaption><a id="random-photo-creator" ${photo ? `href="${escape(photo.creator_url)}"` : 'hidden'}>${photo ? escape(photo.name) : ''}</a></figcaption>
     </figure>
     <p class="random-photo-status" id="random-photo-status" role="status" aria-live="polite">${photo ? '' : 'No photos available yet.'}</p>

@@ -1,10 +1,11 @@
 (() => {
   const button = document.getElementById('random-photo-more');
   const frame = document.getElementById('random-photo-frame');
+  const opener = document.getElementById('random-photo-open');
   const image = document.getElementById('random-photo-image');
   const creator = document.getElementById('random-photo-creator');
   const status = document.getElementById('random-photo-status');
-  if (!button || !frame || !image || !creator || !status) return;
+  if (!button || !frame || !image || !opener || !creator || !status) return;
   let busy = false;
   image.addEventListener('error', () => { status.textContent = 'This photo could not be loaded. Try More.'; });
   if (image.getAttribute('src') && image.complete && !image.naturalWidth) status.textContent = 'This photo could not be loaded. Try More.';
@@ -36,6 +37,8 @@
       if (!['https:', 'http:'].includes(source.protocol) || !/^\/creator\/[a-zA-Z0-9_.%-]+$/.test(photo.creator_url)) throw new Error('Invalid photo');
       await preload(source.href);
       image.src = source.href; image.alt = photo.name; image.hidden = false;
+      opener.dataset.imageUrl = source.href; opener.dataset.imageTitle = photo.name;
+      opener.setAttribute('aria-label', 'Open ' + photo.name); opener.hidden = false;
       creator.href = photo.creator_url; creator.textContent = photo.name; creator.hidden = false;
       document.title = 'Random Photos - ' + photo.name + ' | NextObsession.fans';
     } catch {

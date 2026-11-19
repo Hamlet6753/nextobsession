@@ -112,6 +112,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "Bottom",
+            "mode": "word"
+          },
+          {
             "term": "bondage",
             "mode": "word"
           },
@@ -287,6 +291,10 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "spender",
+            "mode": "word"
+          },
+          {
+            "term": "pegging",
             "mode": "word"
           },
           {
@@ -1036,6 +1044,14 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "character cosplay",
+            "mode": "word"
+          },
+          {
+            "term": "pup girl",
+            "mode": "word"
+          },
+          {
+            "term": "puppy girl",
             "mode": "word"
           },
           {
