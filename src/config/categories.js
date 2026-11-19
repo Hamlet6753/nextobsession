@@ -396,6 +396,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "deep oral",
+            "mode": "word"
+          },          
+          {
             "term": "gagging",
             "mode": "word"
           },
@@ -854,6 +858,22 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "chasity",
+            "mode": "word"
+          },
+          {
+            "term": "pre-op",
+            "mode": "word"
+          },
+          {
+            "term": "preop",
+            "mode": "word"
+          },
+          {
+            "term": "post-op",
+            "mode": "word"
+          },
+          {
+            "term": "post op",
             "mode": "word"
           },
           {
