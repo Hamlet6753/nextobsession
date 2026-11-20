@@ -1,3 +1,4 @@
+import { normalizeSocialLinks } from '../lib/social-links.js';
 export const COUNTERS = ['posts','photos','videos','likes','subscribers','followers','streams','audios','media'];
 export const TEXT_FIELDS = ['name','bio','location','website','avatar_url','banner_url','subscription_type','subscription_currency','pricing_checked_at'];
 export const PRICE_FIELDS = ['subscription_price_cents','subscription_current_price_cents'];
@@ -44,6 +45,10 @@ export function normalize(input) {
   if (record.age !== null && record.age < 18) throw new AdminInputError('Age must be between 18 and 120.');
   record.gender = input.gender == null || input.gender === '' ? null : input.gender;
   if (record.gender !== null && !['female','male','nonbinary','other'].includes(record.gender)) throw new AdminInputError('Invalid gender.');
+  if (Object.hasOwn(input, 'social_links')) {
+    try { record.social_links = JSON.stringify(normalizeSocialLinks(input.social_links, true).map(({url})=>({url}))); }
+    catch(error) { throw new AdminInputError(error.message); }
+  }
   return record;
 }
 export async function loadRecord(db, value) {
@@ -54,6 +59,7 @@ export async function saveRecord(db, input, mode) {
   if (!['create','update'].includes(mode)) throw new AdminInputError('Invalid save mode.');
   const columns = new Set((await db.prepare('PRAGMA table_info(creator)').all()).results.map(x=>x.name));
   if (!columns.has('age') || !columns.has('gender')) throw new AdminInputError('Apply the age/gender migration first.');
+  if (Object.hasOwn(row, 'social_links') && !columns.has('social_links')) throw new AdminInputError('Apply the social links migration first.');
   const data = {...row,updated_at:new Date().toISOString()};
   const keys = Object.keys(data).filter(key=>columns.has(key));
   if (mode === 'create') {

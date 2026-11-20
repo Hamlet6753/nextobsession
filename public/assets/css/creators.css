@@ -264,3 +264,13 @@
 .card-location > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .profile-content .creator-location { align-items: flex-start; }
 .profile-content .creator-location .location-icon { margin-top: 3px; }
+
+/* Profile footer: stats left, social links right; separate social row on mobile. */
+.profile-stats-row { display:flex; align-items:center; flex-wrap:wrap; gap:20px 28px; margin-top:20px; padding-top:16px; border-top:1px solid #30303a; }
+.profile-content .profile-stats-row > .stats { margin:0; padding:0; border:0; }
+.creator-socials { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin-left:auto; max-width:100%; }
+.creator-social { width:42px; height:42px; display:inline-flex; align-items:center; justify-content:center; border:1px solid #30303a; border-radius:50%; color:#eee; background:#24242d; transition:color .15s,border-color .15s,background .15s; }
+.creator-social:hover { color:#ff728f; border-color:#ff728f; background:#30303a; }
+.creator-social:focus-visible { outline:2px solid #ff728f; outline-offset:3px; }
+.social-instagram { color:#ff64a5; } .social-snapchat { color:#fffc00; } .social-youtube { color:#ff5555; } .social-telegram { color:#54b8ef; } .social-facebook { color:#69a4ff; } .social-twitch { color:#b58bff; } .social-bluesky { color:#54a5ff; }
+@media(max-width:700px) { .profile-stats-row { display:block; } .creator-socials { margin:20px 0 0; justify-content:flex-start; } }
