@@ -1,3 +1,4 @@
+import extractSocial from './extractors/social.js';
 import extract from './extractors/extract.js';
 import pricing from './extractors/pricing.js';
 import { username, COUNTERS } from './records.js';
@@ -83,8 +84,9 @@ export async function scrapeProfile(binding,value,launchBrowser) {
     setPhase('profile_extraction');
     const data=await page.evaluate(extract,handle.slice(1));
     if(!data.profile_detected)return {status:'unresolved',error:'No public profile detected. Nothing was saved.',diagnostics:await navigationDiagnostics(page,response,'profile_extraction')};
+    const social_links=await page.evaluate(extractSocial);
     const prices=await page.evaluate(pricing);
-    const record={username:handle,name:data.display_name,bio:data.bio,location:data.location,website:data.website,avatar_url:data.avatar_url,banner_url:data.banner_url,...prices.pricing};
+    const record={social_links,username:handle,name:data.display_name,bio:data.bio,location:data.location,website:data.website,avatar_url:data.avatar_url,banner_url:data.banner_url,...prices.pricing};
     for(const key of COUNTERS)record[key]=data.stats?.[key]??null;
     if(prices.pricing.pricing_source)record.pricing_checked_at=new Date().toISOString();
     return {status:'public_profile',record,diagnostics:{version:VERSION,phase:'complete',http_status:code}};

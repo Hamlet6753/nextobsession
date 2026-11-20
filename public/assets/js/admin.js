@@ -1,6 +1,6 @@
 (() => {
   const $=id=>document.getElementById(id);
-  const fields=[['username','Username'],['name','Name'],['bio','Bio','textarea'],['location','Location'],['website','Website'],['avatar_url','Avatar URL'],['banner_url','Banner URL'],['age','Age','number'],['gender','Gender','gender'],['subscription_type','Subscription type','access'],['subscription_currency','Currency (USD, EUR, ...)'],['subscription_price_cents','Regular price (cents)','number'],['subscription_current_price_cents','Current price (cents)','number'],['pricing_checked_at','Pricing checked at (ISO date)'],...['posts','photos','videos','likes','subscribers','followers','streams','audios','media'].map(k=>[k,k[0].toUpperCase()+k.slice(1),'number'])];
+  const fields=[['username','Username'],['name','Name'],['bio','Bio','textarea'],['location','Location'],['website','Website'],['social_links','Social links (one http(s) URL per line)','textarea'],['avatar_url','Avatar URL'],['banner_url','Banner URL'],['age','Age','number'],['gender','Gender','gender'],['subscription_type','Subscription type','access'],['subscription_currency','Currency (USD, EUR, ...)'],['subscription_price_cents','Regular price (cents)','number'],['subscription_current_price_cents','Current price (cents)','number'],['pricing_checked_at','Pricing checked at (ISO date)'],...['posts','photos','videos','likes','subscribers','followers','streams','audios','media'].map(k=>[k,k[0].toUpperCase()+k.slice(1),'number'])];
   const controls={};let current=null,mode='create',importing=false,stop=false;
   for(const [key,label,type] of fields){
     const wrapper=document.createElement('div');if(type==='textarea')wrapper.className='admin-field-wide';
@@ -14,10 +14,15 @@
     if(key==='name')input.required=true;
     controls[key]=input;wrapper.append(caption,input);$('admin-fields').append(wrapper);
   }
-  function dirty(){return current&&fields.some(([key])=>controls[key].value!==String(current[key]??''));}
+  function fieldValue(key,record){
+    if(key!=='social_links')return String(record[key]??'');
+    let links=record[key];if(typeof links==='string'){try{links=JSON.parse(links);}catch{links=[];}}
+    return Array.isArray(links)?links.map(x=>typeof x==='string'?x:x.url).filter(Boolean).join('\n'):'';
+  }
+  function dirty(){return current&&fields.some(([key])=>controls[key].value!==fieldValue(key,current));}
   function canReplace(){return !dirty()||confirm('Discard unsaved edits in the current form?');}
   function edit(record,exists){
-    current={...record};mode=exists?'update':'create';for(const [key] of fields)controls[key].value=record[key]??'';
+    current={...record};mode=exists?'update':'create';for(const [key] of fields)controls[key].value=fieldValue(key,record);
     $('admin-editor').hidden=false;$('admin-editor-title').textContent=(exists?'Edit ':'New ')+record.username;$('admin-save-status').textContent='';
     $('admin-public-link').hidden=!exists;$('admin-public-link').href='/creator/'+encodeURIComponent(record.username.replace(/^@/,''));
   }
@@ -52,6 +57,6 @@
   $('admin-stop').addEventListener('click',()=>{stop=true;$('admin-status').textContent='Stopping after the current profile...';});
   $('admin-load').addEventListener('click',async()=>{if(!canReplace())return;try{const handle=normalized($('admin-load-username').value);const data=await request('creator?username='+encodeURIComponent(handle));if(!data.record)throw Error('Profile not found. Use New manually.');edit(data.record,true);$('admin-load-status').textContent='Loaded.';}catch(error){$('admin-load-status').textContent=error.message;}});
   $('admin-new').addEventListener('click',()=>{if(!canReplace())return;try{edit({username:normalized($('admin-load-username').value)},false);$('admin-load-status').textContent='New draft.';}catch(error){$('admin-load-status').textContent=error.message;}});
-  $('admin-form').addEventListener('submit',async event=>{event.preventDefault();const record=Object.fromEntries(fields.map(([key])=>[key,controls[key].value]));$('admin-save').disabled=true;try{const data=await request('save',{record,mode});edit(data.record,true);$('admin-save-status').textContent='Saved. Public listings may take up to 60 seconds to refresh.';}catch(error){$('admin-save-status').textContent=error.message;}finally{$('admin-save').disabled=false;}});
+  $('admin-form').addEventListener('submit',async event=>{event.preventDefault();const record=Object.fromEntries(fields.map(([key])=>[key,key==='social_links'?controls[key].value.split(/\r?\n/).map(url=>url.trim()).filter(Boolean).map(url=>({url})):controls[key].value]));$('admin-save').disabled=true;try{const data=await request('save',{record,mode});edit(data.record,true);$('admin-save-status').textContent='Saved. Public listings may take up to 60 seconds to refresh.';}catch(error){$('admin-save-status').textContent=error.message;}finally{$('admin-save').disabled=false;}});
   window.addEventListener('beforeunload',event=>{if(dirty()){event.preventDefault();event.returnValue='';}});
 })();

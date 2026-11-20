@@ -250,6 +250,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "swallowing cum",
+            "mode": "word"
+          },
+          {
             "term": "blowjob",
             "mode": "word"
           },
@@ -283,6 +287,18 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "femdom",
+            "mode": "word"
+          },
+          {
+            "term": "domme",
+            "mode": "word"
+          },
+          {
+            "term": "obey",
+            "mode": "word"
+          },
+          {
+            "term": "sissyfication",
             "mode": "word"
           },
           {
@@ -536,6 +552,10 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "dick rating",
+            "mode": "word"
+          },
+          {
+            "term": "dick rate",
             "mode": "word"
           },
           {
@@ -1094,6 +1114,14 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "athlete",
+            "mode": "word"
+          },
+          {
+            "term": "flexible",
+            "mode": "word"
+          },
+          {
+            "term": "sport",
             "mode": "word"
           },
           {

@@ -19,15 +19,16 @@ const DB={prepare(sql){let params=[];return {bind(...v){params=v;return this;},a
 try {
  script('CREATE TABLE creator(username TEXT PRIMARY KEY,name TEXT,location TEXT,bio TEXT,website TEXT,avatar_url TEXT,banner_url TEXT,updated_at TEXT,photos INTEGER,videos INTEGER,likes INTEGER,subscription_type TEXT,subscription_price_cents INTEGER,subscription_current_price_cents INTEGER);'+readFileSync(new URL('../migrations/20261117_creator_search.sql',import.meta.url),'utf8'));
  script(readFileSync(new URL('../migrations/20261119_creator_manual_fields.sql',import.meta.url),'utf8'));
+ script(readFileSync(new URL('../migrations/20261120_creator_social_links.sql',import.meta.url),'utf8'));
  const secret='test-secret-with-more-than-20-characters';const origin='https://nextobsession.fans';
  const auth='Basic '+btoa('admin:'+secret);const env={DB,ADMIN_PASSWORD:secret};
  const req=(path,body)=>new Request(origin+path,{method:body?'POST':'GET',headers:{Authorization:auth,...(body?{'Content-Type':'application/json',Origin:origin}:{})},body:body?JSON.stringify(body):undefined});
  assert.equal((await adminRoute(new Request(origin+'/admin/import'),env)).status,401);
  assert.equal((await adminRoute(req('/admin/import'),{DB})).status,503);
  const page=await adminRoute(req('/admin/import'),env);assert.equal(page.status,200);assert((await page.text()).includes('noindex,nofollow'));
- const input={username:'Test_user',name:'Name <script>',bio:'Biography',age:'25',gender:'female',photos:'0'};
+ const input={username:'Test_user',name:'Name <script>',bio:'Biography',age:'25',gender:'female',photos:'0',social_links:[{url:'https://instagram.com/test'}]};
  let response=await adminRoute(req('/admin/api/save',{record:input,mode:'create'}),env);assert.equal(response.status,200,await response.clone().text());
- let stored=execute('SELECT * FROM creator')[0];assert.equal(stored.age,25);assert.equal(stored.gender,'female');assert.equal(stored.username,'@test_user');
+ let stored=execute('SELECT * FROM creator')[0];assert.equal(JSON.parse(stored.social_links)[0].url,'https://instagram.com/test');assert.equal(stored.age,25);assert.equal(stored.gender,'female');assert.equal(stored.username,'@test_user');
  assert.equal((await adminRoute(req('/admin/api/save',{record:input,mode:'create'}),env)).status,400);
  response=await adminRoute(req('/admin/api/save',{record:{...input,age:'',gender:'',bio:'Updated'},mode:'update'}),env);assert.equal(response.status,200);stored=execute('SELECT * FROM creator')[0];assert.equal(stored.age,null);assert.equal(stored.gender,null);assert.equal(stored.bio,'Updated');
  assert.throws(()=>normalize({...input,age:17}));assert.throws(()=>normalize({...input,age:'18.5'}));assert.throws(()=>normalize({...input,gender:'invalid'}));assert.throws(()=>normalize({...input,website:'javascript:alert(1)'}));assert.equal(normalize({...input,name:'X\ud835'}).name,'X\ufffd');
