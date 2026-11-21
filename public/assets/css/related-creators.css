@@ -1,0 +1,30 @@
+.related-creators { --related-columns:4; margin:56px 0 24px; min-width:0; }
+.related-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:22px; }
+.related-heading h2 { margin:0; font-size:26px; }
+.related-controls { display:flex; gap:10px; }
+.related-controls[hidden],.related-explore[hidden],.related-track > [hidden] { display:none; }
+.related-controls button { display:grid; place-items:center; width:44px; height:44px; padding:0; border:1px solid #373741; background:#24242d; border-radius:50%; color:#fafafa; cursor:pointer; }
+.related-controls button:hover:not(:disabled) { color:#ff728f; border-color:#ff728f; }
+.related-controls button:disabled { opacity:.3; cursor:default; }
+.related-controls button:focus-visible,.related-viewport:focus-visible { outline:2px solid #ff728f; outline-offset:4px; }
+.related-viewport { overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:5px 0 12px; }
+.related-viewport::-webkit-scrollbar { display:none; }
+.related-track { display:grid; position:relative; grid-auto-flow:column; grid-auto-columns:calc((100% - (var(--related-columns) - 1)*16px)/var(--related-columns)); gap:16px; }
+.related-track > .card { min-width:0; scroll-snap-align:start; }
+.related-track .cover { height:128px; }
+.related-track .card-identity { padding:0 16px 16px; }
+.related-track .avatar-wrap { width:64px; height:64px; margin-top:-32px; margin-bottom:14px; }
+.related-track .card-identity h2 { font-size:18px; }
+.related-track .card-body { padding:0 16px 16px; }
+.related-track .card-footer { gap:6px; }
+.related-track .card-stats { gap:5px; }
+.related-track .stat,.related-track .creator-price { font-size:10px; }
+.related-track .stat strong { font-size:12px; }
+.related-track .card:hover { transform:none; }
+.related-bottom { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:56px; margin-top:14px; }
+.related-status { color:#aaaab5; font-size:13px; }
+.related-explore { margin-left:auto; }
+@media(min-width:1450px) { .related-creators { --related-columns:5; } }
+@media(max-width:1099px) { .related-creators { --related-columns:3; } }
+@media(max-width:799px) { .related-creators { --related-columns:2; } .related-heading h2 { font-size:22px; } }
+@media(max-width:559px) { .related-creators { --related-columns:1; margin-top:36px; } .related-heading h2 { font-size:20px; } .related-track .cover { height:170px; } }
