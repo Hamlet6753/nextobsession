@@ -1,3 +1,4 @@
+import { normalizeSocialLinks } from '../lib/social-links.js';
 import { DIRECTORY_FAQ } from '../config/faq.js';
 import { creatorPath, safeUrl } from '../lib/html.js';
 import { SITE_ORIGIN, canonicalUrl } from './seo.js';
@@ -8,7 +9,7 @@ const PAGE_TYPES={'/about':'AboutPage','/contact':'ContactPage'};
 export function serializeSchema(value) {
  return JSON.stringify(value).replace(/[<>&\u2028\u2029]/g,char=>({'<':'\\u003c','>':'\\u003e','&':'\\u0026','\u2028':'\\u2028','\u2029':'\\u2029'}[char]));
 }
-export function schemaGraph(title,{url,description='',directory=false,adult=false,creator,rows,state,faq=false}={}) {
+export function schemaGraph(title,{url,description='',directory=false,adult=false,creator,rows,state,faq=false,relatedRows}={}) {
  const canonical=canonicalUrl(url,directory);
  const pageId=canonical+'#webpage';
  const graph=[
@@ -28,7 +29,7 @@ export function schemaGraph(title,{url,description='',directory=false,adult=fals
   const avatar=safeUrl(creator.avatar_url);if(avatar)person.image=avatar;
   // The original account link is displayed on the page. Do not claim affiliation,
   // employment, gender, orientation, ratings or ownership of an arbitrary website.
-  person.sameAs=['https://onlyfans.com/'+encodeURIComponent(creator.username.replace(/^@/,''))];
+  person.sameAs=[...new Set(['https://onlyfans.com/'+encodeURIComponent(creator.username.replace(/^@/,'')),...normalizeSocialLinks(creator.social_links).filter(link=>link.platform!=='link').map(link=>link.url)])];
   graph.push(person);page.mainEntity={'@id':personId};
   const image=safeUrl(creator.banner_url)||avatar;if(image)page.primaryImageOfPage={'@type':'ImageObject',url:image};
  }
@@ -36,6 +37,13 @@ export function schemaGraph(title,{url,description='',directory=false,adult=fals
   const listId=canonical+'#creators';
   graph.push({'@type':'ItemList','@id':listId,name:state?.isSerp?'Creator search results':'Explore creators',numberOfItems:rows.length,itemListElement:rows.map((row,index)=>({'@type':'ListItem',position:index+1,name:row.name||row.username,url:SITE_ORIGIN+creatorPath(row.username)}))});
   page.mainEntity={'@id':listId};
+ }
+ if(creator&&Array.isArray(relatedRows)&&relatedRows.length){
+  const sectionId=canonical+'#related-creators';
+  const listId=canonical+'#related-creators-list';
+  graph.push({'@type':'WebPageElement','@id':sectionId,name:'Discover more creators',isPartOf:{'@id':pageId},mainEntity:{'@id':listId}});
+  graph.push({'@type':'ItemList','@id':listId,name:'Discover more creators',itemListOrder:'https://schema.org/ItemListUnordered',numberOfItems:relatedRows.length,itemListElement:relatedRows.map((row,index)=>({'@type':'ListItem',position:index+1,name:row.name||row.username,url:SITE_ORIGIN+creatorPath(row.username)}))});
+  page.hasPart=[{'@id':sectionId}];
  }
  // Reflect the Home/back link and page heading; do not invent category pages.
  if(url&&url.pathname!=='/'){
@@ -46,7 +54,7 @@ export function schemaGraph(title,{url,description='',directory=false,adult=fals
  if(faq){
   const faqId=canonical+'#faq';
   graph.push({'@type':'FAQPage','@id':faqId,url:faqId,name:'Frequently asked questions',isPartOf:{'@id':pageId},mainEntity:DIRECTORY_FAQ.map(item=>({'@type':'Question',name:item.question,acceptedAnswer:{'@type':'Answer',text:item.answer}}))});
-  page.hasPart={'@id':faqId};
+  page.hasPart=[...(page.hasPart||[]),{'@id':faqId}];
  }
  graph.push(page);
  return {'@context':'https://schema.org','@graph':graph};
