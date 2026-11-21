@@ -112,7 +112,11 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
-            "term": "Bottom",
+            "term": "bottom",
+            "mode": "word"
+          },
+          {
+            "term": "goddess",
             "mode": "word"
           },
           {
@@ -287,6 +291,10 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "femdom",
+            "mode": "word"
+          },
+          {
+            "term": "goddess",
             "mode": "word"
           },
           {
@@ -503,6 +511,10 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "fetish",
+            "mode": "word"
+          },
+          {
+            "term": "fetishes",
             "mode": "word"
           },
           {
@@ -889,6 +901,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "crossdresser",
+            "mode": "word"
+          },
+          {
             "term": "pre-op",
             "mode": "word"
           },
@@ -898,6 +914,10 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "post-op",
+            "mode": "word"
+          },
+          {
+            "term": "ts",
             "mode": "word"
           },
           {
@@ -1125,6 +1145,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "sports",
+            "mode": "word"
+          },
+          {
             "term": "gymnast",
             "mode": "word"
           },          
@@ -1138,6 +1162,18 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "fitness",
+            "mode": "word"
+          },
+          {
+            "term": "pole dance",
+            "mode": "word"
+          },
+          {
+            "term": "pole dancer",
+            "mode": "word"
+          },
+          {
+            "term": "dancer",
             "mode": "word"
           },
           {
@@ -1180,6 +1216,26 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "VTuber",
+            "mode": "word"
+          },
+          {
+            "term": "RPG",
+            "mode": "word"
+          },
+          {
+            "term": "fallout",
+            "mode": "word"
+          },
+          {
+            "term": "witcher",
+            "mode": "word"
+          },
+          {
+            "term": "player",
+            "mode": "word"
+          },
+          {
+            "term": "skyrim",
             "mode": "word"
           },
           {
