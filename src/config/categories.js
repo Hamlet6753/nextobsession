@@ -290,6 +290,29 @@ export const CATEGORY_GROUPS = [
         "description": "Creators who talk dirty during their live shows. Featuring voice, conversation and personalized content."
       },
       {
+        "id": "goth",
+        "label": "Goth",
+        "keywords": [
+          {
+            "term": "goth",
+            "mode": "word"
+          },
+          {
+            "term": "gothic",
+            "mode": "word"
+          },
+          {
+            "term": "alternative",
+            "mode": "word"
+          },
+          {
+            "term": "emo",
+            "mode": "word"
+          }
+        ],
+        "description": "Goth creators who embrace the dark aesthetic and lifestyle. Unique content for those who appreciate the gothic culture."
+      },
+      {
         "id": "femdom",
         "label": "Femdom",
         "keywords": [
@@ -802,6 +825,14 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "CD",
+            "mode": "word"
+          },
+          {
+            "term": "twink",
+            "mode": "word"
+          },
+          {
             "term": "chasity",
             "mode": "word"
           },
@@ -917,6 +948,49 @@ export const CATEGORY_GROUPS = [
         "description": "Mom creators you can explore and enjoy their content, showcasing their unique perspectives and experiences."
       },
       {
+        "id": "redhead",
+        "label": "Redhead",
+        "keywords": [
+          {
+            "term": "redhead",
+            "mode": "word"
+          },
+          {
+            "term": "red",
+            "mode": "word"
+          },
+          {
+            "term": "fox",
+            "mode": "word"
+          },
+          {
+            "term": "foxy",
+            "mode": "word"
+          },
+          {
+            "term": "red head",
+            "mode": "word"
+          },
+          {
+            "term": "redhair",
+            "mode": "word"
+          },
+          {
+            "term": "red hair",
+            "mode": "word"
+          },
+          {
+            "term": "ginger",
+            "mode": "word"
+          },
+          {
+            "term": "ginger hair",
+            "mode": "word"
+          }
+        ],
+        "description": "Burning desire of readheads is waiting for you."
+      },
+      {
         "id": "trans",
         "label": "Trans",
         "keywords": [
@@ -985,6 +1059,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "tboy",
+            "mode": "word"
+          },
+          {
             "term": "tgirls",
             "mode": "word"
           },
@@ -994,6 +1072,10 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "trans",
+            "mode": "word"
+          },
+          {
+            "term": "ladyboy",
             "mode": "word"
           },
           {
