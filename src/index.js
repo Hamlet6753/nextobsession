@@ -1,3 +1,4 @@
+import { collectAnalytics, purgeAnalytics } from './services/analytics.js';
 import { adminRoute } from './admin/routes.js';
 import { randomPhotosPage } from './pages/random-photos.js';
 import { randomPhotoApi } from './services/random-photo.js';
@@ -12,10 +13,12 @@ import { creatorApi, healthApi } from './routes/api.js';
 import { DirectoryInputError } from './services/directory.js';
 
 export default {
+  async scheduled(event,env,ctx) { ctx.waitUntil(purgeAnalytics(env)); },
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
     if(path === '/admin' || path.startsWith('/admin/')) return await adminRoute(request,env);
+    if(request.method==='POST'&&path==='/api/analytics')return await collectAnalytics(request,env);
     if(request.method==='POST'&&path==='/api/contact-address'){
       try{return await contactAddress(request,env);}catch{return Response.json({error:'Contact verification temporarily unavailable.'},{status:503,headers:{'Cache-Control':'no-store'}});}
     }
