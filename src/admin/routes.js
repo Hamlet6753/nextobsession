@@ -1,3 +1,5 @@
+import { analyticsPage } from './analytics-page.js';
+import { analyticsReport } from '../services/analytics.js';
 import { adminPage } from './page.js';
 import { AdminInputError, loadRecord, saveRecord, username, clean } from './records.js';
 import { browserCheck, scrapeProfile } from './scrape.js';
@@ -26,6 +28,11 @@ export async function adminRoute(request,env, scrape=scrapeProfile) {
   if(!await authorized(request,env.ADMIN_PASSWORD))return new Response('Administrator sign-in required.',{status:401,headers:{'WWW-Authenticate':'Basic realm="NextObsession admin", charset="UTF-8"','Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}});
   if(request.method==='POST'&&(request.headers.get('Origin')!==url.origin||request.headers.get('Sec-Fetch-Site')==='cross-site'))return json({error:'Invalid request origin.'},403);
   try {
+    if(request.method==='GET'&&url.pathname==='/admin/analytics')return analyticsPage(url);
+    if(request.method==='GET'&&url.pathname==='/admin/api/analytics'){
+      try{return json(await analyticsReport(env.DB,url.searchParams));}
+      catch(error){if(error instanceof AdminInputError)throw error;return json({error:'Analytics unavailable. Apply migrations/20261122_site_analytics.sql to this database.'},503);}
+    }
     if(request.method==='GET'&&['/admin','/admin/import'].includes(url.pathname))return adminPage();
     if(request.method==='GET'&&url.pathname==='/admin/api/creator')return json({record:await loadRecord(env.DB,url.searchParams.get('username'))});
     if(request.method==='POST'&&url.pathname==='/admin/api/browser-check'){
