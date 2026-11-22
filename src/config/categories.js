@@ -1,5 +1,5 @@
 // Category aliases are text matches in bio, not verified personal attributes.
-// Edit this file to change keywords. Shared terms across categories are allowed.
+// Edit keywords and descriptions here. Descriptions should stay within 200 characters.
 export const CATEGORY_GROUPS = [
   {
     "id": "content",
@@ -101,7 +101,8 @@ export const CATEGORY_GROUPS = [
             "term": "anal fisting",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Creators who are passionate about anal sex and genuinely enjoy showing their anal skills."
       },
       {
         "id": "bdsm",
@@ -199,7 +200,8 @@ export const CATEGORY_GROUPS = [
             "term": "submission",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "BDSM creator profiles who like bondage, dominance and submission, free and paid subscriptions."
       },
       {
         "id": "cum",
@@ -273,7 +275,8 @@ export const CATEGORY_GROUPS = [
             "term": "creampie",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Creators who enjoy playing with cum, creampies, cumshots and other kinky stuff."
       },
       {
         "id": "dirty-talk",
@@ -283,7 +286,8 @@ export const CATEGORY_GROUPS = [
             "term": "dirty talk",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Creators who talk dirty during their live shows. Featuring voice, conversation and personalized content."
       },
       {
         "id": "femdom",
@@ -325,7 +329,8 @@ export const CATEGORY_GROUPS = [
             "term": "spend",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Femdom creators who will dominate you mentally, financially and physically. You will obey them and they will make you their sissy."
       },
       {
         "id": "tatooed",
@@ -343,7 +348,8 @@ export const CATEGORY_GROUPS = [
             "term": "inked",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Tattooed creators with more or less inked bodies who like to show what they got."
       },
       {
         "id": "pregnant",
@@ -357,7 +363,8 @@ export const CATEGORY_GROUPS = [
             "term": "pregnancy",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Pregnant creators who are open about their pregnancy and enjoy sharing their experience with their audience."
       },
       {
         "id": "blonde",
@@ -371,7 +378,8 @@ export const CATEGORY_GROUPS = [
             "term": "blond",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Blonde creators with stunning hair and captivating presence."
       },
       {
         "id": "small-tits",
@@ -417,7 +425,8 @@ export const CATEGORY_GROUPS = [
             "term": "tiny",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Small tits creators - tiny, elegant bodies. You will enjoy their petite charm and delicate features."
       },
       {
         "id": "deep-throat",
@@ -430,7 +439,7 @@ export const CATEGORY_GROUPS = [
           {
             "term": "deep oral",
             "mode": "word"
-          },          
+          },
           {
             "term": "gagging",
             "mode": "word"
@@ -439,7 +448,8 @@ export const CATEGORY_GROUPS = [
             "term": "swallow",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Deep Throat creators with extraordinary oral skills will make you feel like you're experiencing something truly special."
       },
       {
         "id": "fetish",
@@ -541,7 +551,8 @@ export const CATEGORY_GROUPS = [
             "term": "fetish-friendly",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Fetish creators who explore unique kinks and interests, from feet to roleplay, offering a variety of content for enthusiasts."
       },
       {
         "id": "joi",
@@ -555,8 +566,8 @@ export const CATEGORY_GROUPS = [
             "term": "voice",
             "mode": "word"
           }
-          
-        ]
+        ],
+        "description": "JOI creators with distinctive voices and captivating presence."
       },
       {
         "id": "dick-rating",
@@ -578,7 +589,8 @@ export const CATEGORY_GROUPS = [
             "term": "cock ratings",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Dick Rating creators who provide honest and entertaining evaluations of male anatomy, offering a unique perspective on this niche interest."
       },
       {
         "id": "big-ass",
@@ -616,7 +628,8 @@ export const CATEGORY_GROUPS = [
             "term": "phat ass",
             "mode": "word"
           }
-          ]
+        ],
+        "description": "Big Ass creators with curvy silhouettes and captivating presence."
       },
       {
         "id": "asmr",
@@ -626,7 +639,8 @@ export const CATEGORY_GROUPS = [
             "term": "asmr",
             "mode": "word"
           }
-          ]
+        ],
+        "description": "ASMR creators who specialize in creating relaxing and immersive audio experiences, offering a variety of content for enthusiasts seeking sensory stimulation."
       },
       {
         "id": "big-tits",
@@ -656,7 +670,8 @@ export const CATEGORY_GROUPS = [
             "term": "milky",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Big TITS creators with curvy silhouettes and captivating presence."
       },
       {
         "id": "nudist",
@@ -665,18 +680,21 @@ export const CATEGORY_GROUPS = [
           {
             "term": "nudist",
             "mode": "word"
-          }
-        ]
-      },
-      {
-        "id": "nudist",
-        "label": "Nudist",
-        "keywords": [
+          },
+          {
+            "term": "public nudity",
+            "mode": "word"
+          },
+          {
+            "term": "nude beach",
+            "mode": "word"
+          },
           {
             "term": "public",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Nudist creators who embrace body positivity and naturalism, offering a variety of content for enthusiasts."
       }
     ]
   },
@@ -708,7 +726,7 @@ export const CATEGORY_GROUPS = [
             "term": "18yo",
             "mode": "word"
           },
-                    {
+          {
             "term": "18y/o",
             "mode": "word"
           },
@@ -716,7 +734,7 @@ export const CATEGORY_GROUPS = [
             "term": "19 y.o.",
             "mode": "word"
           },
-                    {
+          {
             "term": "19y/o",
             "mode": "word"
           },
@@ -772,7 +790,8 @@ export const CATEGORY_GROUPS = [
             "term": "just turned 20",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Adult teens creators who are 18 years or older and enjoy sharing their youthful energy and content with their audience."
       },
       {
         "id": "gay",
@@ -822,7 +841,8 @@ export const CATEGORY_GROUPS = [
             "term": "swag",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Gay creators who express their identity, kinks and interests through their content."
       },
       {
         "id": "lesbian",
@@ -852,7 +872,8 @@ export const CATEGORY_GROUPS = [
             "term": "lgbt",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Lesbian creators you can explore and enjoy their content, showcasing their unique perspectives and experiences."
       },
       {
         "id": "mature",
@@ -862,7 +883,8 @@ export const CATEGORY_GROUPS = [
             "term": "mature",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Mature creators who have life experience and offer content tailored to their audience."
       },
       {
         "id": "milf",
@@ -880,7 +902,8 @@ export const CATEGORY_GROUPS = [
             "term": "mommy",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "MILF creators who are mothers and enjoy sharing their experiences and content with their audience."
       },
       {
         "id": "mom",
@@ -890,7 +913,8 @@ export const CATEGORY_GROUPS = [
             "term": "mom",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Mom creators you can explore and enjoy their content, showcasing their unique perspectives and experiences."
       },
       {
         "id": "trans",
@@ -927,7 +951,7 @@ export const CATEGORY_GROUPS = [
           {
             "term": "throbbing surprise",
             "mode": "word"
-          },          
+          },
           {
             "term": "cuntboy",
             "mode": "word"
@@ -976,7 +1000,8 @@ export const CATEGORY_GROUPS = [
             "term": "transgender",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Transgender, shemale and non-binary creators who are waiting for you to subscribe and explore their content."
       }
     ]
   },
@@ -1080,7 +1105,8 @@ export const CATEGORY_GROUPS = [
             "term": "yuri",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Anime creators inspired by manga, animation and fandom culture. Playful, creative and passionate about their favorite characters and stories."
       },
       {
         "id": "cosplay",
@@ -1126,7 +1152,8 @@ export const CATEGORY_GROUPS = [
             "term": "fantasy costume",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Cosplay creators who bring characters to life through costumes, makeup and performance. Explore their public profiles and account details."
       },
       {
         "id": "fitness",
@@ -1151,7 +1178,7 @@ export const CATEGORY_GROUPS = [
           {
             "term": "gymnast",
             "mode": "word"
-          },          
+          },
           {
             "term": "bodybuilding",
             "mode": "word"
@@ -1204,7 +1231,8 @@ export const CATEGORY_GROUPS = [
             "term": "yoga",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Fitness creators sharing gym routines, active lifestyles and training interests. Fitness enthusiasts and professionals."
       },
       {
         "id": "gamer",
@@ -1286,7 +1314,8 @@ export const CATEGORY_GROUPS = [
             "term": "video games",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Gamer creators who share a passion for games, streaming and online communities. Find a gamer girlfriend or a gaming streamer to follow and enjoy their content."
       },
       {
         "id": "geek",
@@ -1324,7 +1353,8 @@ export const CATEGORY_GROUPS = [
             "term": "science fiction",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Geek creators who embrace their love for comics, fantasy, sci-fi and nerd culture."
       }
     ]
   },
@@ -1340,7 +1370,6 @@ export const CATEGORY_GROUPS = [
             "term": "gangbang",
             "mode": "word"
           },
-          
           {
             "term": "group scenes",
             "mode": "word"
@@ -1349,7 +1378,8 @@ export const CATEGORY_GROUPS = [
             "term": "group sex",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Creators who enjoy gngbang scenarios and group sexual experiences."
       },
       {
         "id": "old-and-young",
@@ -1358,8 +1388,21 @@ export const CATEGORY_GROUPS = [
           {
             "term": "old and young",
             "mode": "word"
+          },
+          {
+            "term": "older men",
+            "mode": "word"
+          },
+          {
+            "term": "older women",
+            "mode": "word"
+          },
+          {
+            "term": "elderly men",
+            "mode": "word"
           }
-        ]
+        ],
+        "description": "Old and Young creators - girls like older men, guys like older women."
       },
       {
         "id": "orgy",
@@ -1413,7 +1456,8 @@ export const CATEGORY_GROUPS = [
             "term": "group sex",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Creators who do orgies, group sex and swinger content."
       },
       {
         "id": "pov",
@@ -1423,7 +1467,8 @@ export const CATEGORY_GROUPS = [
             "term": "pov",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Creators who create POV content."
       },
       {
         "id": "ppv",
@@ -1432,8 +1477,17 @@ export const CATEGORY_GROUPS = [
           {
             "term": "ppv",
             "mode": "word"
+          },
+          {
+            "term": "pay per view",
+            "mode": "word"
+          },
+          {
+            "term": "pay-per-view",
+            "mode": "word"
           }
-        ]
+        ],
+        "description": "Creators who offer PPV (Pay Per View) content."
       },
       {
         "id": "solo",
@@ -1443,7 +1497,8 @@ export const CATEGORY_GROUPS = [
             "term": "solo",
             "mode": "word"
           }
-        ]
+        ],
+        "description": "Creators who create solo content. Stunning, captivating and unique performances."
       }
     ]
   }
