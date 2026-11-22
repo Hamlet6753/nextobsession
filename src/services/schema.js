@@ -9,7 +9,7 @@ const PAGE_TYPES={'/about':'AboutPage','/contact':'ContactPage'};
 export function serializeSchema(value) {
  return JSON.stringify(value).replace(/[<>&\u2028\u2029]/g,char=>({'<':'\\u003c','>':'\\u003e','&':'\\u0026','\u2028':'\\u2028','\u2029':'\\u2029'}[char]));
 }
-export function schemaGraph(title,{url,description='',directory=false,adult=false,creator,rows,state,faq=false,relatedRows}={}) {
+export function schemaGraph(title,{url,description='',directory=false,adult=false,creator,rows,state,faq=false,relatedRows,category}={}) {
  const canonical=canonicalUrl(url,directory);
  const pageId=canonical+'#webpage';
  const graph=[
@@ -21,6 +21,7 @@ export function schemaGraph(title,{url,description='',directory=false,adult=fals
  if(creator)type='ItemPage';
  const page={'@type':type,'@id':pageId,url:canonical,name:title+' | NextObsession.fans',isPartOf:{'@id':SITE_ID},inLanguage:'en'};
  if(description)page.description=description;
+ if(category)page.about={'@type':'DefinedTerm',name:category.label,description:category.description};
  if(adult)page.isFamilyFriendly=false;
  if(creator){
   const personId=canonical+'#person';
@@ -35,7 +36,7 @@ export function schemaGraph(title,{url,description='',directory=false,adult=fals
  }
  if(directory&&Array.isArray(rows)){
   const listId=canonical+'#creators';
-  graph.push({'@type':'ItemList','@id':listId,name:state?.isSerp?'Creator search results':'Explore creators',numberOfItems:rows.length,itemListElement:rows.map((row,index)=>({'@type':'ListItem',position:index+1,name:row.name||row.username,url:SITE_ORIGIN+creatorPath(row.username)}))});
+  graph.push({'@type':'ItemList','@id':listId,name:category?.title || (state?.isSerp?'Creator search results':'Explore creators'),numberOfItems:rows.length,itemListElement:rows.map((row,index)=>({'@type':'ListItem',position:index+1,name:row.name||row.username,url:SITE_ORIGIN+creatorPath(row.username)}))});
   page.mainEntity={'@id':listId};
  }
  if(creator&&Array.isArray(relatedRows)&&relatedRows.length){
