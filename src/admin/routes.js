@@ -1,3 +1,4 @@
+import { assertNotIgnored, ignoreProfiles, unignoreProfile, ignoredCsv, ignoredPage } from './ignored.js';
 import { analyticsPage } from './analytics-page.js';
 import { analyticsReport } from '../services/analytics.js';
 import { adminPage } from './page.js';
@@ -28,6 +29,10 @@ export async function adminRoute(request,env, scrape=scrapeProfile) {
   if(!await authorized(request,env.ADMIN_PASSWORD))return new Response('Administrator sign-in required.',{status:401,headers:{'WWW-Authenticate':'Basic realm="NextObsession admin", charset="UTF-8"','Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}});
   if(request.method==='POST'&&(request.headers.get('Origin')!==url.origin||request.headers.get('Sec-Fetch-Site')==='cross-site'))return json({error:'Invalid request origin.'},403);
   try {
+    if(request.method==='GET'&&url.pathname==='/admin/ignored')return await ignoredPage(env.DB,url);
+    if(request.method==='GET'&&url.pathname==='/admin/api/ignored.csv')return await ignoredCsv(env.DB);
+    if(request.method==='POST'&&url.pathname==='/admin/api/ignored')return json(await ignoreProfiles(env.DB,await body(request)));
+    if(request.method==='POST'&&url.pathname==='/admin/api/unignore')return json(await unignoreProfile(env.DB,await body(request)));
     if(request.method==='GET'&&url.pathname==='/admin/analytics')return analyticsPage(url);
     if(request.method==='GET'&&url.pathname==='/admin/api/analytics'){
       try{return json(await analyticsReport(env.DB,url.searchParams));}
@@ -40,6 +45,7 @@ export async function adminRoute(request,env, scrape=scrapeProfile) {
     }
     if(request.method==='POST'&&url.pathname==='/admin/api/scrape'){
       const input=await body(request);const handle=username(input.username);
+      await assertNotIgnored(env.DB,handle);
       const existing=await loadRecord(env.DB,handle);
       const result=await scrape(env.BROWSER,handle);
       if(result.status!=='public_profile')return json(result);
@@ -49,12 +55,12 @@ export async function adminRoute(request,env, scrape=scrapeProfile) {
       return json({status:'public_profile',exists:Boolean(existing),record:JSON.parse(clean(JSON.stringify(record))),diagnostics:result.diagnostics});
     }
     if(request.method==='POST'&&url.pathname==='/admin/api/save'){
-      const input=await body(request);const record=await saveRecord(env.DB,input.record,input.mode);return json({saved:true,record});
+      const input=await body(request);await assertNotIgnored(env.DB,input.record?.username);const record=await saveRecord(env.DB,input.record,input.mode);return json({saved:true,record});
     }
     return json({error:'Not found.'},404);
   } catch(error) {
     if(error instanceof AdminInputError)return json({error:error.message},400);
     console.error('Admin operation failed:',error?.name||'Error');
-    return json({error:'Operation failed. Check the database migration and Browser Run binding. Nothing was intentionally overwritten.'},503);
+    return json({error:'Operation failed. Check required database migrations (including creator_ignored) and the Browser Run binding. Nothing was intentionally overwritten.'},503);
   }
 }
