@@ -49,6 +49,9 @@ export async function analyticsReport(db,params,now=Date.now()) {
  const today=Math.floor(now/DAY)*DAY;
  const start=dateValue(params.get('from'),today-6*DAY),end=dateValue(params.get('to'),today)+DAY;
  if(start<today-89*DAY||end>today+DAY||start>=end)throw new AdminInputError('Choose dates within the last 90 days. Dates use UTC.');
+ const requested=params.get('granularity')||'auto';
+ if(!['auto','hour','day','week','month'].includes(requested))throw new AdminInputError('Invalid chart interval.');
+ const granularity=requested==='auto'?((end-start)/DAY<=2?'hour':'day'):requested;
  const where=['occurred_at >= ?','occurred_at < ?'],args=[start,end];
  for(const [key,column,allowed] of [['path','path',null],['landing_path','landing_path',null],['source','source',null],['medium','medium',null],['campaign','campaign',null],['type','event_type',['pageview','click']],['device','device',['desktop','mobile','tablet']],['kind','page_kind',['home','search','creator','information','random-photos']],['action','action',['internal','onlyfans','creator-website','social','external','email','image','carousel-next','carousel-prev','random-next','button']]]){
   const value=params.get(key);if(!value)continue;
@@ -57,7 +60,29 @@ export async function analyticsReport(db,params,now=Date.now()) {
  }
  const clause=where.join(' AND '),summary="SUM(CASE WHEN event_type='pageview' THEN 1 ELSE 0 END) AS pageviews, SUM(CASE WHEN event_type='click' THEN 1 ELSE 0 END) AS clicks, COUNT(DISTINCT session_id) AS sessions";
  const groups=[['totals',`SELECT ${summary} FROM site_analytics WHERE ${clause}`],['daily',`SELECT strftime('%Y-%m-%d',occurred_at/1000,'unixepoch') AS day, ${summary} FROM site_analytics WHERE ${clause} GROUP BY day ORDER BY day`],['pages',`SELECT path,page_kind, ${summary} FROM site_analytics WHERE ${clause} GROUP BY path,page_kind ORDER BY pageviews DESC,clicks DESC,path LIMIT 100`],['sources',`SELECT source,medium,campaign, ${summary} FROM site_analytics WHERE ${clause} GROUP BY source,medium,campaign ORDER BY sessions DESC,pageviews DESC,source LIMIT 100`],['targets',`SELECT action,target,COUNT(*) AS clicks FROM site_analytics WHERE ${clause} AND event_type='click' GROUP BY action,target ORDER BY clicks DESC,action,target LIMIT 100`],['landings',`SELECT landing_path,COUNT(DISTINCT session_id) AS sessions FROM site_analytics WHERE ${clause} GROUP BY landing_path ORDER BY sessions DESC,landing_path LIMIT 100`],['devices',`SELECT device, ${summary} FROM site_analytics WHERE ${clause} GROUP BY device ORDER BY sessions DESC`]];
+ const bucket={hour:"strftime('%Y-%m-%dT%H:00:00Z',occurred_at/1000,'unixepoch')",day:"strftime('%Y-%m-%d',occurred_at/1000,'unixepoch')",week:"date(occurred_at/1000,'unixepoch','-6 days','weekday 1')",month:"strftime('%Y-%m-01',occurred_at/1000,'unixepoch')"}[granularity];
+ if(granularity!=='day')groups.push(['series',`SELECT ${bucket} AS bucket, ${summary} FROM site_analytics WHERE ${clause} GROUP BY bucket ORDER BY bucket`]);
  const results=await db.batch(groups.map(([,sql])=>db.prepare(sql).bind(...args)));
- const out={from:new Date(start).toISOString().slice(0,10),to:new Date(end-DAY).toISOString().slice(0,10),timezone:'UTC',retention_days:90};
- groups.forEach(([key],i)=>{out[key]=key==='totals'?results[i].results[0]:results[i].results;});return out;
+ const out={from:new Date(start).toISOString().slice(0,10),to:new Date(end-DAY).toISOString().slice(0,10),timezone:'UTC',retention_days:90,granularity};
+ groups.forEach(([key],i)=>{out[key]=key==='totals'?results[i].results[0]:results[i].results;});
+ out.series=fillTimeSeries(start,end,granularity,granularity==='day'?out.daily.map(row=>({...row,bucket:row.day})):out.series);
+ return out;
+}
+
+// UTC calendar buckets; weekly boundaries are Monday, with partial edge buckets.
+export function fillTimeSeries(start,end,granularity,rows) {
+ const date=new Date(start);
+ if(granularity==='week')date.setUTCDate(date.getUTCDate()-((date.getUTCDay()+6)%7));
+ if(granularity==='month')date.setUTCDate(1);
+ const byBucket=new Map(rows.map(row=>[row.bucket,row]));
+ const series=[];
+ while(date.getTime()<end){
+  const bucket=granularity==='hour'?date.toISOString().slice(0,13)+':00:00Z':date.toISOString().slice(0,10);
+  const row=byBucket.get(bucket);
+  series.push({bucket,pageviews:Number(row?.pageviews||0),clicks:Number(row?.clicks||0),sessions:Number(row?.sessions||0)});
+  if(granularity==='hour')date.setUTCHours(date.getUTCHours()+1);
+  else if(granularity==='month')date.setUTCMonth(date.getUTCMonth()+1);
+  else date.setUTCDate(date.getUTCDate()+(granularity==='week'?7:1));
+ }
+ return series;
 }
