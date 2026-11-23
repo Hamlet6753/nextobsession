@@ -113,6 +113,18 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "latexfashion",
+            "mode": "word"
+          },
+          {
+            "term": "latex",
+            "mode": "word"
+          },
+          {
+            "term": "catsuit",
+            "mode": "word"
+          },
+          {
             "term": "bottom",
             "mode": "word"
           },
@@ -318,6 +330,14 @@ export const CATEGORY_GROUPS = [
         "keywords": [
           {
             "term": "femdom",
+            "mode": "word"
+          },
+          {
+            "term": "latexfashion",
+            "mode": "word"
+          },
+          {
+            "term": "latex",
             "mode": "word"
           },
           {
@@ -943,9 +963,127 @@ export const CATEGORY_GROUPS = [
           {
             "term": "mom",
             "mode": "word"
+          },
+          {
+            "term": "milf",
+            "mode": "word"
           }
         ],
         "description": "Mom creators you can explore and enjoy their content, showcasing their unique perspectives and experiences."
+      },
+      {
+        "id": "wheelchair",
+        "label": "Wheelchair",
+        "keywords": [
+          {
+            "term": "wheelchair",
+            "mode": "word"
+          },
+          {
+            "term": "paraplegic",
+            "mode": "word"
+          },
+          {
+            "term": "disabled",
+            "mode": "word"
+          },
+          {
+            "term": "amputee",
+            "mode": "word"
+          },
+          {
+            "term": "amputeegirl",
+            "mode": "word"
+          },
+          {
+            "term": "quadamputee",
+            "mode": "word"
+          },
+          {
+            "term": "quadriplegic",
+            "mode": "word"
+          },
+          {
+            "term": "disability",
+            "mode": "word"
+          },
+          {
+            "term": "wheelchairuser",
+            "mode": "word"
+          },
+          {
+            "term": "amputeelife",
+            "mode": "word"
+          }
+        ],
+        "description": "Wheelchair creators who share their experiences and content with their audience."
+      },
+      {
+        "id": "hijab",
+        "label": "Hijab",
+        "keywords": [
+          {
+            "term": "hijab",
+            "mode": "word"
+          },
+          {
+            "term": "hijabi",
+            "mode": "word"
+          },
+          {
+            "term": "hijab girl",
+            "mode": "word"
+          },
+          {
+            "term": "وَنُور",
+            "mode": "word"
+          },
+          {
+            "term": "مسلمة",
+            "mode": "word"
+          },
+          {
+            "term": "مسلمة محجبة",
+            "mode": "word"
+          },
+          {
+            "term": "الله",
+            "mode": "word"
+          },
+          {
+            "term": "قَلْبِي",
+            "mode": "word"
+          },
+          {
+            "term": "فِي",
+            "mode": "word"
+          },
+          {
+            "term": "حَيَاتِي",
+            "mode": "word"
+          },
+          {
+            "term": "allah",
+            "mode": "word"
+          },
+          {
+            "term": "muslim",
+            "mode": "word"
+          },
+          {
+            "term": "muslims",
+            "mode": "word"
+          },
+          {
+            "term": "Saudi Arabia",
+            "mode": "word"
+          },
+          {
+            "term": "Saudi",
+            "mode": "word"
+          }
+        ],
+        "description": "Hijab creators who embrace their cultural and religious identity, offering a unique perspective and content for their audience."
       },
       {
         "id": "redhead",
@@ -1008,6 +1146,26 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "preop",
+            "mode": "word"
+          },
+          {
+            "term": "pre op",
+            "mode": "word"
+          },
+          {
+            "term": "post op",
+            "mode": "word"
+          },
+          {
+            "term": "transwoman",
+            "mode": "word"
+          },
+          {
+            "term": "transman",
+            "mode": "word"
+          },
+          {
+            "term": "transsexual",
             "mode": "word"
           },
           {
@@ -1076,6 +1234,18 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "ladyboy",
+            "mode": "word"
+          },
+          {
+            "term": "tranny",
+            "mode": "word"
+          },
+          {
+            "term": "trap",
+            "mode": "word"
+          },
+          {
+            "term": "mtf",
             "mode": "word"
           },
           {
@@ -1238,6 +1408,69 @@ export const CATEGORY_GROUPS = [
         "description": "Cosplay creators who bring characters to life through costumes, makeup and performance. Explore their public profiles and account details."
       },
       {
+        "id": "ebony",
+        "label": "Ebony",
+        "keywords": [
+          {
+            "term": "ebony",
+            "mode": "word"
+          },
+          {
+            "term": "bbw",
+            "mode": "word"
+          },
+          {
+            "term": "ebonywomen",
+            "mode": "word"
+          },
+          {
+            "term": "thickwomen",
+            "mode": "word"
+          },
+          {
+            "term": "african",
+            "mode": "word"
+          },
+          {
+            "term": "african american",
+            "mode": "word"
+          },
+          {
+            "term": "black",
+            "mode": "word"
+          },
+          {
+            "term": "blackgirls",
+            "mode": "word"
+          },
+          {
+            "term": "melanin",
+            "mode": "word"
+          },
+          {
+            "term": "trinidad",
+            "mode": "word"
+          },
+          {
+            "term": "afrobeat",
+            "mode": "word"
+          },
+          {
+            "term": "afro",
+            "mode": "word"
+          },
+          {
+            "term": "braziliangirl",
+            "mode": "word"
+          },
+          {
+            "term": "afro",
+            "mode": "word"
+          }
+        ],
+        "description": "Ebony creators celebrating their heritage and lifestyle. Explore their public profiles and account details."
+      },
+      {
         "id": "fitness",
         "label": "Fitness",
         "keywords": [
@@ -1315,6 +1548,93 @@ export const CATEGORY_GROUPS = [
           }
         ],
         "description": "Fitness creators sharing gym routines, active lifestyles and training interests. Fitness enthusiasts and professionals."
+      },
+      {
+        "id": "asian",
+        "label": "Asian",
+        "keywords": [
+          {
+            "term": "asian",
+            "mode": "word"
+          },
+          {
+            "term": "asian girl",
+            "mode": "word"
+          },
+          {
+            "term": "asian woman",
+            "mode": "word"
+          },
+          {
+            "term": "japanese",
+            "mode": "word"
+          },
+          {
+            "term": "chinese",
+            "mode": "word"
+          },
+          {
+            "term": "korean",
+            "mode": "word"
+          },
+          {
+            "term": "japanese girl",
+            "mode": "word"
+          },
+          {
+            "term": "自",
+            "mode": "word"
+          },
+          {
+            "term": "由",
+            "mode": "word"
+          },
+          {
+            "term": "filipina",
+            "mode": "word"
+          },
+          {
+            "term": "asianmodel",
+            "mode": "word"
+          },
+          {
+            "term": "pinoy",
+            "mode": "word"
+          },
+          {
+            "term": "asianmodels",
+            "mode": "word"
+          },
+          {
+            "term": "ASAIN",
+            "mode": "word"
+          },
+          {
+            "term": "Philippines",
+            "mode": "word"
+          },
+          {
+            "term": "Japan",
+            "mode": "word"
+          },
+          {
+            "term": "China",
+            "mode": "word"
+          },
+          {
+            "term": "Korea",
+            "mode": "word"
+          },
+          {
+            "term": "コスプレ",
+            "mode": "word"
+          },
+          {
+            "term": "日本",
+            "mode": "word"
+          }
+        ],
+        "description": "Asian creators sharing their unique perspectives, cultural experiences, and lifestyle content. Connect with Asian influencers and content creators."
       },
       {
         "id": "gamer",
