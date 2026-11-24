@@ -1,3 +1,4 @@
+import { discoveryById } from '../config/discovery.js';
 import { escape, creatorPath, safeUrl } from '../lib/html.js';
 export const SITE_ORIGIN = 'https://nextobsession.fans';
 export const SITEMAP_PROFILE_LIMIT = 200;
@@ -7,10 +8,12 @@ export function canonicalUrl(url, directory = false) {
   if (directory && url) {
     const q=(url.searchParams.get('q')||'').trim().slice(0,80);
     if(q)result.searchParams.set('q',q);
-    for(const id of [...new Set(url.searchParams.getAll('category'))].sort())if(id)result.searchParams.append('category',id);
+    const shortcut=discoveryById.get(url.searchParams.get('browse'));
+    const categories=[...url.searchParams.getAll('category'),...(shortcut?.category ? [shortcut.category] : [])];
+    for(const id of [...new Set(categories)].sort())if(id)result.searchParams.append('category',id);
     for(const key of ['location','price']){const value=(url.searchParams.get(key)||'').trim();if(value)result.searchParams.set(key,value);}
     const filtered=Boolean(q||result.searchParams.has('category')||result.searchParams.has('location')||result.searchParams.has('price'));
-    const sort=url.searchParams.get('sort');if(!filtered&&sort&&!['random','default'].includes(sort))result.searchParams.set('sort',sort);
+    const sort=url.searchParams.get('sort') || shortcut?.sort;if(!filtered&&sort&&!['random','default'].includes(sort))result.searchParams.set('sort',sort);
   }
   return result.href;
 }
