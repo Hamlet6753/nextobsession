@@ -460,6 +460,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "vampire",
+            "mode": "word"
+          },
+          {
             "term": "gothic",
             "mode": "word"
           },
@@ -469,6 +473,14 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "emo",
+            "mode": "word"
+          },
+          {
+            "term": "darkness",
+            "mode": "word"
+          },
+          {
+            "term": "dark soul",
             "mode": "word"
           }
         ],
@@ -1174,6 +1186,29 @@ export const CATEGORY_GROUPS = [
         "description": "Mom creators you can explore and enjoy their content, showcasing their unique perspectives and experiences."
       },
       {
+        "id": "amateur",
+        "label": "Amateur",
+        "keywords": [
+          {
+            "term": "amateur",
+            "mode": "word"
+          },
+          {
+            "term": "newbee",
+            "mode": "word"
+          },
+          {
+            "term": "newbie",
+            "mode": "word"
+          },
+          {
+            "term": "new here",
+            "mode": "word"
+          }
+        ],
+        "description": "Amateur creators who are just starting out and exploring their interests."
+      },
+      {
         "id": "wheelchair",
         "label": "Wheelchair",
         "keywords": [
@@ -1620,6 +1655,18 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "athletic",
+            "mode": "word"
+          },
+          {
+            "term": "cycling",
+            "mode": "word"
+          },
+          {
+            "term": "tennis",
+            "mode": "word"
+          },
+          {
+            "term": "horses",
             "mode": "word"
           },
           {
