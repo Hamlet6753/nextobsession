@@ -1,3 +1,4 @@
+import { discoveryById, visibleFilters } from '../config/discovery.js';
 import { cachedQuery } from './query-cache.js';
 import { readFilters, filterKey, filterParams, filterPlan } from './filters.js';
 import { searchPlan } from './search.js';
@@ -40,14 +41,18 @@ function directoryState(url) {
   const q = (url.searchParams.get('q') || '').trim().slice(0, 80);
   let filters;
   try { filters = readFilters(url); } catch (error) { throw new DirectoryInputError(error.message); }
-  const isSerp = Boolean(q || filters.categories.length || filters.location || filters.price);
-  const requested = url.searchParams.get('sort') || (isSerp ? 'default' : 'random');
+  const browse = url.searchParams.get('browse') || '';
+  const shortcut = discoveryById.get(browse);
+  if (browse && !shortcut) throw new DirectoryInputError('Unknown discovery option.');
+  if (shortcut?.category) filters.categories = [...new Set([...filters.categories, shortcut.category])].sort();
+  const isSerp = Boolean(browse || q || filters.categories.length || filters.location || filters.price);
+  const requested = url.searchParams.get('sort') || (shortcut?.sort || (isSerp ? 'default' : 'random'));
   const sort = isSerp && requested === 'random' ? 'default' : requested;
   if (!Object.hasOwn(SORTS, sort)) throw new DirectoryInputError('Unknown sorting option.');
   const cursor = url.searchParams.has('cursor') ? decodeCursor(url.searchParams.get('cursor')) : null;
   if (cursor && (cursor.q !== q || cursor.s !== sort || cursor.f !== filterKey(filters))) throw new DirectoryInputError('Search or sorting changed. Refresh the page.');
   const seed = cursor ? cursor.seed : crypto.getRandomValues(new Uint32Array(1))[0] % 2147483646 + 1;
-  return { q, sort, cursor, seed, filters, isSerp };
+  return { q, sort, cursor, seed, filters, isSerp, browse };
 }
 async function directoryPage(db, state) {
   const { q, sort, seed, cursor } = state;
@@ -101,9 +106,11 @@ async function directoryPage(db, state) {
   return { rows, next };
 }
 function continuationUrl(path, state, cursor) {
-  const params=new URLSearchParams({q:state.q,cursor});
-  if(state.sort!=='default')params.set('sort',state.sort);
-  return path+'?'+filterParams(state.filters,params);
+  const params=new URLSearchParams({cursor});
+  if(state.q)params.set('q',state.q);
+  if(state.browse)params.set('browse',state.browse);
+  if(state.sort !== (discoveryById.get(state.browse)?.sort || 'default'))params.set('sort',state.sort);
+  return path+'?'+filterParams(visibleFilters(state),params);
 }
 
 export { SORTS, DirectoryInputError, directoryState, directoryPage, continuationUrl };

@@ -70,3 +70,113 @@
     gap:10px
   }
 }
+
+/* 1.5 pt smaller than the existing responsive homepage heading. */
+.hero h1 {
+  font-size:calc(clamp(36px,6vw,64px) - 1.5pt)
+}
+
+.discovery-heading {
+  display:flex;
+  align-items:center;
+  gap:24px
+}
+
+.discovery-heading h1 {
+  min-width:0
+}
+
+/* Replace any SVG in /assets/icons/discovery/ without changing JS or rebuilding.
+   Masks use the SVG silhouette. Set solid colors OR gradients here. */
+.discovery-icon {
+  --discovery-svg:url('/assets/icons/discovery/category.svg');
+  --discovery-icon-fill:linear-gradient(135deg,#ff8aa5,#ff5283);
+  display:inline-block;
+  flex:0 0 auto;
+  width:22px;
+  height:22px;
+  background:var(--discovery-icon-fill);
+  -webkit-mask:var(--discovery-svg) center / contain no-repeat;
+  mask:var(--discovery-svg) center / contain no-repeat
+}
+
+.discovery-icon--new { --discovery-svg:url('/assets/icons/discovery/new.svg'); --discovery-icon-fill:linear-gradient(135deg,#ffdf88,#ffab55) }
+.discovery-icon--blonde { --discovery-svg:url('/assets/icons/discovery/blonde.svg'); --discovery-icon-fill:#ffe199 }
+.discovery-icon--trans { --discovery-svg:url('/assets/icons/discovery/trans.svg'); --discovery-icon-fill:linear-gradient(135deg,#69ddff,#ff92c3) }
+.discovery-icon--anime { --discovery-svg:url('/assets/icons/discovery/anime.svg'); --discovery-icon-fill:#c6a1ff }
+.discovery-icon--redhead { --discovery-svg:url('/assets/icons/discovery/redhead.svg'); --discovery-icon-fill:linear-gradient(135deg,#ffb579,#ff624b) }
+.discovery-icon--anal { --discovery-svg:url('/assets/icons/discovery/anal.svg') }
+.discovery-icon--fetish { --discovery-svg:url('/assets/icons/discovery/fetish.svg'); --discovery-icon-fill:#e6a2ff }
+.discovery-icon--location { --discovery-svg:url('/assets/icons/discovery/location.svg') }
+.discovery-icon--free { --discovery-svg:url('/assets/icons/discovery/free.svg') }
+.discovery-icon--paid { --discovery-svg:url('/assets/icons/discovery/paid.svg') }
+
+.hero-discovery-icon {
+  display:flex;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  width:72px;
+  height:72px;
+  border:1px solid #ff728f30;
+  border-radius:22px;
+  background:radial-gradient(ellipse at top left,#ff728f20,transparent 85%)
+}
+
+.hero-discovery-icon .discovery-icon {
+  width:42px;
+  height:42px
+}
+
+.discovery-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 22px 0 26px;
+}
+
+.discovery-link {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  min-height:48px;
+  padding:11px 21px;
+  border:1px solid #36363f;
+  border-radius:999px;
+  color:#ededf2;
+  background:linear-gradient(180deg,#202027,#18181e);
+  box-shadow:inset 0 1px 0 #ffffff06;
+  font-size:15px;
+  font-weight:700;
+  transition:border-color .16s,background .16s,transform .16s
+}
+
+.discovery-link:hover {
+  border-color:#ff728f80;
+  background:#292029;
+  transform:translateY(-1px)
+}
+
+.discovery-link.is-active {
+  border-color:#ff728f;
+  background:#ff728f1c;
+  color:#ff99b2
+}
+
+@media(max-width:560px) {
+  .discovery-heading { gap:12px }
+  .hero-discovery-icon { width:48px; height:48px; border-radius:14px }
+  .hero-discovery-icon .discovery-icon { width:30px; height:30px }
+  .discovery-links { gap:8px; margin:18px 0 22px;
+      justify-content: center; 
+  }
+  .discovery-link { min-height:44px; gap:7px; padding:10px 15px; font-size:14px }
+  .discovery-link .discovery-icon { width:19px; height:19px }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  .discovery-link { transition:none }
+  .discovery-link:hover { transform:none }
+}

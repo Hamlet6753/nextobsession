@@ -5,12 +5,28 @@
   const status = document.getElementById('load-status');
   const count = document.getElementById('loaded-count');
   function updateCount() { if(count&&grid)count.textContent=grid.querySelectorAll('[data-username]').length+' creators loaded'; }
+  function updateCollectionSchema() {
+    const script=document.querySelector('script[data-site-schema]');
+    if(!script||!grid)return;
+    try {
+      const schema=JSON.parse(script.textContent);
+      const list=schema['@graph']?.find(node=>node['@type']==='ItemList'&&node['@id']?.endsWith('#creators'));
+      if(!list)return;
+      const origin=new URL(list['@id']).origin;
+      list.itemListElement=[...grid.querySelectorAll('article.card[data-username]')].map((card,index)=>({
+        '@type':'ListItem',position:index+1,name:card.querySelector('h2')?.textContent||card.dataset.username,
+        url:new URL(card.querySelector('a.card-profile-link').getAttribute('href'),origin).href
+      }));
+      list.numberOfItems=list.itemListElement.length;
+      script.textContent=JSON.stringify(schema).replace(/[<>&\u2028\u2029]/g,char=>'\\u'+char.charCodeAt(0).toString(16).padStart(4,'0'));
+    } catch { /* Keep the valid SSR graph if unexpected markup is encountered. */ }
+  }
   const sort = document.getElementById('creator-sort');
   if (sort) sort.addEventListener('change', () => sort.form.requestSubmit());
   const form=document.getElementById('discovery-form');
   if(form)form.addEventListener('submit',()=>{
     const query=form.querySelector('[name=q]');
-    const active=Boolean(query?.value.trim() || form.querySelector('[name=category]:checked') || [...form.querySelectorAll('[name=location]')].some(el=>el.value.trim()) || form.querySelector('[name=price]:checked')?.value);
+    const active=Boolean(form.querySelector('[name=browse]')?.value || query?.value.trim() || form.querySelector('[name=category]:checked') || [...form.querySelectorAll('[name=location]')].some(el=>el.value.trim()) || form.querySelector('[name=price]:checked')?.value);
     if(sort && (sort.value==='default' || (active && sort.value==='random')))sort.disabled=true;
   });
   if (!grid || !more || !sentinel) return;
@@ -46,6 +62,7 @@
         grid.appendChild(element);
       }
       updateCount();
+      updateCollectionSchema();
       if (!data.next) finish();
       else {
         target.pathname = '/';
