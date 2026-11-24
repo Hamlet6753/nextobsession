@@ -22,13 +22,13 @@
   function galleryItem(element) {
     const placeholder=element.hasAttribute('data-image-placeholder');
     let url=validUrl(element.dataset.imageUrl),fill='';
-    const icon=placeholder&&element.querySelector('.avatar-placeholder');
+    const icon=placeholder&&element.querySelector('.avatar-placeholder, .banner-placeholder');
     if(icon){
       const css=getComputedStyle(icon);
       const mask=css.maskImage||css.webkitMaskImage||'';
       const source=mask.match(/^url\((?:"([^"]*)"|'([^']*)'|([^)]*))\)$/);
       if(source)url=validUrl(source[1]||source[2]||source[3])||url;
-      fill=css.backgroundImage&&css.backgroundImage!=='none'?css.backgroundImage:css.backgroundColor||css.getPropertyValue('--avatar-placeholder-fill').trim();
+      fill=css.backgroundImage&&css.backgroundImage!=='none'?css.backgroundImage:css.backgroundColor||css.getPropertyValue('--avatar-placeholder-fill').trim()||css.getPropertyValue('--banner-placeholder-fill').trim();
     }
     return {url,title:element.dataset.imageTitle||'Image preview',element,placeholder,fill};
   }
