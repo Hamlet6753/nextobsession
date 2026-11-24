@@ -12,11 +12,25 @@
   const zoom = dialog.querySelector('.lightbox-zoom');
   const levels = [1, 2, 3, 4];
   let activeImage = null, opener = null, previousOverflow = '', gallery = [], index = 0;
-  let zoomIndex = 0, offsetX = 0, offsetY = 0, baseWidth = 0, baseHeight = 0, loaded = false, gesture = null;
+  let zoomIndex = 0, offsetX = 0, offsetY = 0, baseWidth = 0, baseHeight = 0, naturalWidth = 0, naturalHeight = 0, loaded = false, gesture = null;
   let ignoreOverlayClickUntil = 0;
   function validUrl(value) {
-    try { const url = new URL(value); return ['https:', 'http:'].includes(url.protocol) ? url.href : null; }
+    if(typeof value!=='string'||!value.trim())return null;
+    try { const url = new URL(value,location.href); return ['https:', 'http:'].includes(url.protocol) ? url.href : null; }
     catch { return null; }
+  }
+  function galleryItem(element) {
+    const placeholder=element.hasAttribute('data-image-placeholder');
+    let url=validUrl(element.dataset.imageUrl),fill='';
+    const icon=placeholder&&element.querySelector('.avatar-placeholder');
+    if(icon){
+      const css=getComputedStyle(icon);
+      const mask=css.maskImage||css.webkitMaskImage||'';
+      const source=mask.match(/^url\((?:"([^"]*)"|'([^']*)'|([^)]*))\)$/);
+      if(source)url=validUrl(source[1]||source[2]||source[3])||url;
+      fill=css.backgroundImage&&css.backgroundImage!=='none'?css.backgroundImage:css.backgroundColor||css.getPropertyValue('--avatar-placeholder-fill').trim();
+    }
+    return {url,title:element.dataset.imageTitle||'Image preview',element,placeholder,fill};
   }
   function stopDrag() {
     if (gesture && stage.hasPointerCapture(gesture.id)) stage.releasePointerCapture(gesture.id);
@@ -41,9 +55,9 @@
   }
   function fitImage() {
     if (!loaded || !activeImage || !stage.clientWidth || !stage.clientHeight) return;
-    const ratio = Math.min(stage.clientWidth / activeImage.naturalWidth, stage.clientHeight / activeImage.naturalHeight);
-    baseWidth = activeImage.naturalWidth * ratio;
-    baseHeight = activeImage.naturalHeight * ratio;
+    const ratio = Math.min(stage.clientWidth / naturalWidth, stage.clientHeight / naturalHeight);
+    baseWidth = naturalWidth * ratio;
+    baseHeight = naturalHeight * ratio;
     activeImage.style.width = baseWidth + 'px';
     activeImage.style.height = baseHeight + 'px';
     applyZoom();
@@ -62,7 +76,7 @@
     applyZoom();
   }
   function render() {
-    loaded = false; resetZoom();
+    loaded = false; naturalWidth=naturalHeight=0; resetZoom();
     const item = gallery[index];
     title.textContent = item.title;
     original.href = item.url;
@@ -70,17 +84,23 @@
     previous.hidden = next.hidden = gallery.length < 2;
     status.textContent = 'Loading image...';
     stage.setAttribute('aria-busy', 'true');
-    const img = new Image(); activeImage = img;
-    img.alt = item.title; img.referrerPolicy = 'no-referrer'; img.className = 'lightbox-image'; img.draggable = false;
+    const loader = new Image();
+    const img = item.placeholder ? document.createElement('span') : loader; activeImage = img;
+    loader.alt = item.title; loader.referrerPolicy = 'no-referrer'; img.className = 'lightbox-image'+(item.placeholder?' lightbox-placeholder':''); img.draggable = false;
+    if(item.placeholder){
+      img.style.setProperty('--avatar-placeholder-svg','url('+JSON.stringify(item.url)+')');
+      if(item.fill)img.style.setProperty('--avatar-placeholder-fill',item.fill);
+    }
     img.tabIndex = 0; img.setAttribute('role', 'button');
-    img.addEventListener('load', () => {
+    loader.addEventListener('load', () => {
       if (activeImage !== img) return;
-      loaded = true;
+      naturalWidth=loader.naturalWidth; naturalHeight=loader.naturalHeight;
+      loaded = naturalWidth>0&&naturalHeight>0;
       status.textContent = '';
       stage.setAttribute('aria-busy', 'false');
       fitImage(); img.classList.add('is-loaded');
     });
-    img.addEventListener('error', () => {
+    loader.addEventListener('error', () => {
       if (activeImage !== img) return;
       loaded = false; resetZoom();
       status.textContent = 'This image could not be loaded. Try opening the source image.';
@@ -89,7 +109,7 @@
     img.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); cycleZoom(); }
     });
-    stage.replaceChildren(img); img.src = item.url;
+    stage.replaceChildren(img); loader.src = item.url;
   }
   function move(direction) {
     if (!dialog.open || gallery.length < 2) return;
@@ -158,7 +178,7 @@
     if (!button || !validUrl(button.dataset.imageUrl)) return;
     const scope = button.closest('.profile-box, [data-image-gallery]'); if (!scope) return;
     const buttons = [...scope.querySelectorAll('button[data-image-url]')];
-    gallery = buttons.map(el => ({url:validUrl(el.dataset.imageUrl),title:el.dataset.imageTitle || 'Image preview',element:el})).filter(item => item.url);
+    gallery = buttons.map(galleryItem).filter(item => item.url);
     index = gallery.findIndex(item => item.element === button); if (index < 0) return;
     opener = button; previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden';
     dialog.showModal(); render(); close.focus();

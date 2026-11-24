@@ -99,3 +99,11 @@
   .lightbox-bottom { gap: 6px; left: 8px; right: 8px; }
 }
 @media(prefers-reduced-motion:reduce) { .lightbox-image, .photo-hint { transition: none; } }
+
+/* The SVG placeholder uses the same fitted geometry, pan and zoom as a photo.
+   Its live CSS gradient is copied from the avatar when the gallery opens. */
+.lightbox-placeholder {
+  background:var(--avatar-placeholder-fill,linear-gradient(135deg,#287cff,#a855ff,#ff168b));
+  -webkit-mask:var(--avatar-placeholder-svg,url('/assets/icons/placeholder.svg')) center / contain no-repeat;
+  mask:var(--avatar-placeholder-svg,url('/assets/icons/placeholder.svg')) center / contain no-repeat
+}

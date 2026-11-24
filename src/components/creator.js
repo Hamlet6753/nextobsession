@@ -15,7 +15,12 @@ function image(value, alt, className) {
 function avatar(row, interactive = false) {
   const name=row.name||row.username;
   const url=avatarUrl(row.avatar_url);
-  if(!url)return `<div class="avatar-wrap has-avatar-placeholder"><span class="avatar-placeholder" role="img" aria-label="${escape(name+' - no avatar')}"></span></div>`;
+  if(!url){
+    const placeholder=interactive
+      ? `<button type="button" class="photo-open avatar-open" data-image-url="/assets/icons/placeholder.svg" data-image-placeholder data-image-title="${escape(name)}" aria-label="${escape('Open '+name+' placeholder')}" aria-haspopup="dialog"><span class="avatar-placeholder" aria-hidden="true"></span></button>`
+      : `<span class="avatar-placeholder" role="img" aria-label="${escape(name+' - no avatar')}"></span>`;
+    return `<div class="avatar-wrap has-avatar-placeholder">${placeholder}</div>`;
+  }
   const photo=interactive ? image(url,name,'avatar') : `<img class="avatar" src="${escape(url)}" alt="${escape(name)}" loading="lazy" referrerpolicy="no-referrer">`;
   return `<div class="avatar-wrap">${escape((row.name || row.username.replace('@','')).slice(0,1).toUpperCase())}${photo}</div>`;
 }
