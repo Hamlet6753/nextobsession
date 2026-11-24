@@ -26,23 +26,50 @@ export function filterPlan(filters, columns) {
   for(const id of filters.categories){const category=byId.get(id);if(!selected.has(category.group))selected.set(category.group,[]);selected.get(category.group).push(...category.keywords);}
   if(selected.size){
     inputs.push('? AS category_rules');bindings.push(JSON.stringify([...selected.values()]));
-    // A group may be prefiltered only if every OR branch has an indexed term.
+    // Indexed rules stay indexed even if another OR branch is only 1-2 chars.
+    // Short word candidates use a cheap raw-bio boundary check; final matching
+    // below remains authoritative. A rule with no searchable token cannot be
+    // safely prefiltered, so its group keeps the full candidate set.
     let groupIndex=0;
     for(const rules of selected.values()){
-      const terms=rules.map(rule=>{
+      const indexed=new Map(),short=[];
+      let unrestricted=false;
+      for(const rule of rules){
         const tokens=rule.mode==='contains'?[rule.term]:rule.term.match(/[\p{L}\p{N}]+/gu)||[];
         const long=tokens.filter(token=>[...token].length>=3);
-        return long.length?'('+long.map(t=>'"'+t.replace(/"/g,'""')+'"').join(' AND ')+')':null;
-      });
-      if(terms.every(Boolean)){
-        const key='category_match'+groupIndex++;inputs.push('? AS '+key);bindings.push([...new Set(terms)].join(' OR '));
-        candidates.push('creator.rowid IN (SELECT rowid FROM creator_search_v1 WHERE bio MATCH (SELECT '+key+' FROM input))');
+        if(long.length){
+          // Phrases such as 'pre op' must also contain the short word 'op'.
+          // Without this guard, the trigram 'pre' admits unrelated biographies.
+          let anchor=rule.mode==='word' ? tokens.filter(token=>[...token].length<3).sort((a,b)=>[...b].length-[...a].length)[0]||'' : '';
+          if(!indexed.has(anchor)&&indexed.size>=8)anchor='';
+          if(!indexed.has(anchor))indexed.set(anchor,[]);
+          indexed.get(anchor).push('('+long.map(t=>'"'+t.replace(/"/g,'""')+'"').join(' AND ')+')');
+          continue;
+        }
+        if(rule.mode==='contains'){short.push({mode:'contains',term:rule.term});continue;}
+        if(!tokens.length){unrestricted=true;break;}
+        const token=[...tokens].sort((a,b)=>[...b].length-[...a].length)[0];
+        short.push({mode:'word',pattern:'*[^a-z0-9]'+token+'[^a-z0-9]*'});
       }
+      if(unrestricted)continue;
+      const group=groupIndex++,branches=[];
+      let band=0;
+      const raw='lower(COALESCE('+column('bio')+",''))";
+      for(const [anchor,terms] of indexed){
+        const key='category_match'+group+'_'+band++;inputs.push('? AS '+key);bindings.push([...new Set(terms)].join(' OR '));
+        const match='creator.rowid IN (SELECT rowid FROM creator_search_v1 WHERE bio MATCH (SELECT '+key+' FROM input))';
+        branches.push(anchor ? '('+match+" AND (' ' || "+raw+" || ' ') GLOB "+literal('*[^a-z0-9]'+anchor+'[^a-z0-9]*')+')' : match);
+      }
+      if(short.length){
+        const key='category_short'+group;inputs.push('? AS '+key);bindings.push(JSON.stringify([...new Map(short.map(rule=>[JSON.stringify(rule),rule])).values()]));
+        branches.push(`EXISTS (SELECT 1 FROM json_each((SELECT ${key} FROM input)) AS short_rule WHERE CASE json_extract(short_rule.value,'$.mode') WHEN 'contains' THEN instr(${raw},json_extract(short_rule.value,'$.term')) > 0 ELSE (' ' || ${raw} || ' ') GLOB json_extract(short_rule.value,'$.pattern') END)`);
+      }
+      if(branches.length)candidates.push('('+branches.join(' OR ')+')');
     }
     let words='lower(COALESCE(bio,\'\'))';
     for(const sep of ['\t','\n','\r','.',',','_','-','/','\\','|',':',';','!','?','(',')','[',']','{','}','"',"'",'@','+','&']) words=`replace(${words}, ${literal(sep)}, ' ')`;
     for(let i=0;i<7;i++)words=`replace(${words}, '  ', ' ')`;
-    ctes.push(`filter_text AS (SELECT FILTER_SOURCE.*, lower(COALESCE(bio,'')) AS _filter_bio, (' ' || trim(${words}) || ' ') AS _filter_words FROM FILTER_SOURCE)`);
+    ctes.push(`filter_text AS MATERIALIZED (SELECT FILTER_SOURCE.*, lower(COALESCE(bio,'')) AS _filter_bio, (' ' || trim(${words}) || ' ') AS _filter_words FROM FILTER_SOURCE)`);
     // English keyword boundaries: keep GLOB patterns below D1's 50-byte limit.
     conditions.push(`NOT EXISTS (SELECT 1 FROM json_each(input.category_rules) AS filter_group WHERE NOT EXISTS (SELECT 1 FROM json_each(filter_group.value) AS keyword WHERE CASE json_extract(keyword.value,'$.mode') WHEN 'contains' THEN instr(_filter_bio,json_extract(keyword.value,'$.term')) > 0 ELSE _filter_words GLOB ('*[^a-z0-9]' || json_extract(keyword.value,'$.words') || '[^a-z0-9]*') END))`);
     // Canonicalize keyword boundaries in JS once instead of SQL for every row.
