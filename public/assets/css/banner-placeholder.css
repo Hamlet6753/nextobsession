@@ -1,0 +1,12 @@
+/* Missing banner only. Replace public/assets/icons/banner_placeholder.svg. */
+.banner-placeholder {
+  --banner-placeholder-svg:url('/assets/icons/banner_placeholder.svg');
+  --banner-placeholder-fill:linear-gradient(135deg,#287cff 0%,#a855ff 50%,#ff168b 100%);
+  position:absolute;
+  inset:14% 18%;
+  display:block;
+  background:var(--banner-placeholder-fill);
+  -webkit-mask:var(--banner-placeholder-svg) center / contain no-repeat;
+  mask:var(--banner-placeholder-svg) center / contain no-repeat;
+  pointer-events:none
+}

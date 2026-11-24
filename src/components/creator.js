@@ -1,3 +1,5 @@
+import { bannerUrl } from '../lib/banner.js';
+import { avatarUrl } from '../lib/avatar.js';
 import { escape, safeUrl, formatNumber, creatorPath } from '../lib/html.js';
 const STAT_LABELS = {
   posts: 'Posts', photos: 'Photos', videos: 'Videos', likes: 'Likes',
@@ -8,6 +10,28 @@ const STAT_LABELS = {
 function image(value, alt, className) {
   const url = safeUrl(value);
   return url ? `<button type="button" class="photo-open ${className}-open" data-image-url="${escape(url)}" data-image-title="${escape(alt)}" aria-label="${escape('Open '+alt)}" aria-haspopup="dialog"><img class="${className}" src="${escape(url)}" alt="${escape(alt)}" loading="lazy" referrerpolicy="no-referrer"><span class="photo-hint" aria-hidden="true">View image</span></button>` : '';
+}
+
+
+function avatar(row, interactive = false) {
+  const name=row.name||row.username;
+  const url=avatarUrl(row.avatar_url);
+  if(!url){
+    const placeholder=interactive
+      ? `<button type="button" class="photo-open avatar-open" data-image-url="/assets/icons/placeholder.svg" data-image-placeholder data-image-title="${escape(name)}" aria-label="${escape('Open '+name+' placeholder')}" aria-haspopup="dialog"><span class="avatar-placeholder" aria-hidden="true"></span></button>`
+      : `<span class="avatar-placeholder" role="img" aria-label="${escape(name+' - no avatar')}"></span>`;
+    return `<div class="avatar-wrap has-avatar-placeholder">${placeholder}</div>`;
+  }
+  const photo=interactive ? image(url,name,'avatar') : `<img class="avatar" src="${escape(url)}" alt="${escape(name)}" loading="lazy" referrerpolicy="no-referrer">`;
+  return `<div class="avatar-wrap">${escape((row.name || row.username.replace('@','')).slice(0,1).toUpperCase())}${photo}</div>`;
+}
+
+function banner(row, interactive = false) {
+  const name=row.name||row.username;
+  const url=bannerUrl(row.banner_url);
+  if(url)return interactive ? image(url,name,'banner') : `<img class="banner" src="${escape(url)}" alt="${escape(name)}" loading="lazy" referrerpolicy="no-referrer">`;
+  if(interactive)return `<button type="button" class="photo-open banner-open" data-image-url="/assets/icons/banner_placeholder.svg" data-image-placeholder data-image-title="${escape(name+' - banner placeholder')}" aria-label="${escape('Open '+name+' banner placeholder')}" aria-haspopup="dialog"><span class="banner-placeholder" aria-hidden="true"></span><span class="photo-hint" aria-hidden="true">View image</span></button>`;
+  return `<span class="banner-placeholder" role="img" aria-label="${escape(name+' - no banner')}"></span>`;
 }
 
 function stats(row, detailed = false) {
@@ -34,11 +58,7 @@ function creatorActions(row, website) {
 }
 function card(row) {
   const path = creatorPath(row.username);
-  const picture = (value, alt, cls) => {
-    const url = safeUrl(value);
-    return url ? `<img class="${cls}" src="${escape(url)}" alt="${escape(alt)}" loading="lazy" referrerpolicy="no-referrer">` : '';
-  };
-  return `<article class="card" data-username="${escape(row.username)}"><a class="card-profile-link" href="${path}" aria-label="${escape('View profile: '+(row.name || row.username))}"><div class="cover">${picture(row.banner_url,row.name || row.username,'banner')}</div><div class="card-identity"><div class="avatar-wrap">${escape((row.name || row.username.replace('@','')).slice(0,1).toUpperCase())}${picture(row.avatar_url,row.name || row.username,'avatar')}</div><h2>${escape(row.name || row.username)}</h2><div class="username">${escape(row.username)}</div></div></a><div class="card-body"><p class="bio-preview">${escape(row.bio || '')}</p>${creatorLocation(row.location, 'card-location')}<div class="card-footer"><div class="card-stats">${stats(row)}</div>${creatorPrice(row)}</div></div></article>`;
+  return `<article class="card" data-username="${escape(row.username)}"><a class="card-profile-link" href="${path}" aria-label="${escape('View profile: '+(row.name || row.username))}"><div class="cover">${banner(row)}</div><div class="card-identity">${avatar(row)}<h2>${escape(row.name || row.username)}</h2><div class="username">${escape(row.username)}</div></div></a><div class="card-body"><p class="bio-preview">${escape(row.bio || '')}</p>${creatorLocation(row.location, 'card-location')}<div class="card-footer"><div class="card-stats">${stats(row)}</div>${creatorPrice(row)}</div></div></article>`;
 }
 
-export { image, stats, creatorPrice, creatorActions, creatorLocation, card };
+export { image, avatar, banner, stats, creatorPrice, creatorActions, creatorLocation, card };
