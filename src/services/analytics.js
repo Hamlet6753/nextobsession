@@ -3,7 +3,17 @@ const DAY=86400000;
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const knownPath=value=>typeof value==='string'&&(/^(?:\/|\/(?:about|terms|privacy|contact|removal|random-photos))$/.test(value)||/^\/creator\/[a-zA-Z0-9_.-]{1,64}$/.test(value));
 const token=(value,max=80)=>typeof value==='string'?value.trim().replace(/[^a-zA-Z0-9_. /:@+-]/g,'').slice(0,max):'';
-const reply=(status=204)=>new Response(null,{status,headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}});
+const reply=(status=204,reason='')=>new Response(null,{status,headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow',...(reason?{'X-Analytics-Status':reason}:{}),...([429,503].includes(status)?{'Retry-After':'60'}:{})}});
+function unavailable(reason,error){
+ const detail=String(error?.message||'').replace(/[\r\n]/g,' ').slice(0,240);
+ console.error('Analytics unavailable:',reason,error?.name||'',detail);
+ return reply(503,reason);
+}
+async function saveEvent(db,event){
+ const keys=Object.keys(event);
+ try{await db.prepare('INSERT INTO site_analytics ('+keys.join(',')+') VALUES ('+keys.map(()=>'?').join(',')+') ON CONFLICT(event_id) DO NOTHING').bind(...Object.values(event)).run();return true;}
+ catch(error){unavailable('database-write-failed',error);return false;}
+}
 export function normalizeEvent(data,request,now=Date.now()) {
  if(!data||data.consent!=='granted'||!UUID.test(data.event_id)||!UUID.test(data.session_id)||!['pageview','click'].includes(data.event_type)||!knownPath(data.path)||!knownPath(data.landing_path))return null;
  const kind=data.path==='/'?(data.page_kind==='search'?'search':'home'):data.path.startsWith('/creator/')?'creator':data.path==='/random-photos'?'random-photos':'information';
@@ -18,27 +28,35 @@ export function normalizeEvent(data,request,now=Date.now()) {
  }
  return {event_id:data.event_id,occurred_at:now,event_type:data.event_type,session_id:data.session_id,path:data.path,page_kind:kind,action,target,source:token(data.source)||'direct',medium:token(data.medium)||'none',campaign:token(data.campaign),landing_path:data.landing_path,device};
 }
-export async function collectAnalytics(request,env) {
+export async function collectAnalytics(request,env,ctx) {
  const url=new URL(request.url);
  if(url.hostname!=='nextobsession.fans'&&env.ANALYTICS_ENABLED!=='true')return reply();
  if(request.headers.get('Origin')!==url.origin||request.headers.get('Sec-Fetch-Site')==='cross-site')return reply(403);
  if(!request.headers.get('Content-Type')?.startsWith('application/json'))return reply(415);
  if(/bot|crawler|spider|headless|slurp|preview|lighthouse/i.test(request.headers.get('User-Agent')||'')||request.headers.get('Sec-GPC')==='1'||request.headers.get('DNT')==='1')return reply();
  try {
-  if(!env.ANALYTICS_RATE_LIMITER)return reply(503);
+  if(!env.ANALYTICS_RATE_LIMITER)return unavailable('rate-limiter-missing');
   const ip=request.headers.get('CF-Connecting-IP')||'unknown';
   const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(ip));
   const key='analytics:'+Array.from(new Uint8Array(hash),n=>n.toString(16).padStart(2,'0')).join('');
-  if(!(await env.ANALYTICS_RATE_LIMITER.limit({key})).success)return reply(429);
- }catch{return reply(503);}
+  let timer;
+  const limited=await Promise.race([env.ANALYTICS_RATE_LIMITER.limit({key}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Rate limiter deadline exceeded')),700);})]).finally(()=>clearTimeout(timer));
+  if(!limited.success)return reply(429,'rate-limited');
+ }catch(error){return unavailable('rate-limiter-unavailable',error);}
  const reader=request.body?.getReader();if(!reader)return reply(400);
  const chunks=[];let size=0;
  while(true){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>4096){await reader.cancel();return reply(413);}chunks.push(value);}
  let data;try{const bytes=new Uint8Array(size);let at=0;for(const chunk of chunks){bytes.set(chunk,at);at+=chunk.length;}data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{return reply(400);}
  const event=normalizeEvent(data,request);if(!event)return reply(400);
- const keys=Object.keys(event);
- try{await env.DB.prepare('INSERT INTO site_analytics ('+keys.join(',')+') VALUES ('+keys.map(()=>'?').join(',')+') ON CONFLICT(event_id) DO NOTHING').bind(...Object.values(event)).run();return reply();}
- catch(error){console.error('Analytics write unavailable:',error?.name||'Error');return reply(503);}
+ if(!env.DB?.prepare)return unavailable('database-binding-missing');
+ const writing=saveEvent(env.DB,event);
+ if(ctx?.waitUntil){
+  // Acknowledges acceptance, not durable delivery. D1 failures are logged above.
+  ctx.waitUntil(writing.then(()=>undefined));
+  return reply(202,'accepted');
+ }
+ // Direct callers without a Worker execution context retain confirmed writes.
+ return (await writing)?reply(204,'stored'):reply(503,'database-write-failed');
 }
 export async function purgeAnalytics(env,now=Date.now()) {
  // Scheduled daily; indexed retention delete, no creator records affected.
