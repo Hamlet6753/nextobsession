@@ -1,0 +1,16 @@
+/* Custom SVG for missing AVATARS only. Replace public/assets/icons/placeholder.svg. */
+.avatar-wrap.has-avatar-placeholder {
+  background:radial-gradient(circle at 32% 24%,#282441,#16161f 75%)
+}
+
+.avatar-placeholder {
+  --avatar-placeholder-svg:url('/assets/icons/placeholder.svg');
+  --avatar-placeholder-fill:linear-gradient(135deg,#287cff 0%,#a855ff 50%,#ff168b 100%);
+  position:absolute;
+  inset:17%;
+  display:block;
+  background:var(--avatar-placeholder-fill);
+  -webkit-mask:var(--avatar-placeholder-svg) center / contain no-repeat;
+  mask:var(--avatar-placeholder-svg) center / contain no-repeat;
+  pointer-events:none
+}

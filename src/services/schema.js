@@ -1,3 +1,4 @@
+import { avatarUrl } from '../lib/avatar.js';
 import { normalizeSocialLinks } from '../lib/social-links.js';
 import { DIRECTORY_FAQ } from '../config/faq.js';
 import { creatorPath, safeUrl } from '../lib/html.js';
@@ -28,7 +29,7 @@ export function schemaGraph(title,{url,description='',directory=false,adult=fals
   const personId=canonical+'#person';
   const person={'@type':'Person','@id':personId,name:creator.name||creator.username,alternateName:creator.username,url:canonical};
   if(creator.bio)person.description=creator.bio;
-  const avatar=safeUrl(creator.avatar_url);if(avatar)person.image=avatar;
+  const avatar=avatarUrl(creator.avatar_url);if(avatar)person.image=avatar;
   // The original account link is displayed on the page. Do not claim affiliation,
   // employment, gender, orientation, ratings or ownership of an arbitrary website.
   person.sameAs=[...new Set(['https://onlyfans.com/'+encodeURIComponent(creator.username.replace(/^@/,'')),...normalizeSocialLinks(creator.social_links).filter(link=>link.platform!=='link').map(link=>link.url)])];

@@ -123,6 +123,16 @@
   background:radial-gradient(ellipse at top left,#ff728f20,transparent 85%)
 }
 
+.discovery-icon--cum {
+  --discovery-svg: url('/assets/icons/discovery/cum.svg');
+  --discovery-icon-fill: linear-gradient(
+    135deg,
+    #287cff,
+    #a855ff,
+    #ff168b
+  );
+}
+
 .hero-discovery-icon .discovery-icon {
   width:42px;
   height:42px
