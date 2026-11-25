@@ -172,6 +172,42 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "vietnamese",
+            "mode": "word"
+          },
+          {
+            "term": "vietnam",
+            "mode": "word"
+          },
+          {
+            "term": "bangkok",
+            "mode": "word"
+          },
+          {
+            "term": "ho chi minh",
+            "mode": "word"
+          },
+          {
+            "term": "Hồ Chí Minh",
+            "mode": "word"
+          },
+          {
+            "term": "Saigon",
+            "mode": "word"
+          },
+          {
+            "term": "thai",
+            "mode": "word"
+          },
+          {
+            "term": "viet",
+            "mode": "word"
+          },
+          {
+            "term": "Việt Nam",
+            "mode": "word"
+          },
+          {
             "term": "asian girl",
             "mode": "word"
           },
@@ -876,6 +912,10 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "bigger tits",
+            "mode": "word"
+          },
+          {
             "term": "busty",
             "mode": "word"
           },
@@ -1059,6 +1099,14 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "chastityplug",
+            "mode": "word"
+          },
+          {
+            "term": "lockedchastity",
+            "mode": "word"
+          },
+          {
             "term": "CD",
             "mode": "word"
           },
@@ -1203,6 +1251,22 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "new here",
+            "mode": "word"
+          },
+          {
+            "term": "homemade",
+            "mode": "word"
+          },
+          {
+            "term": "home made",
+            "mode": "word"
+          },
+          {
+            "term": "home videos",
+            "mode": "word"
+          },
+          {
+            "term": "home porn",
             "mode": "word"
           }
         ],
@@ -1374,6 +1438,14 @@ export const CATEGORY_GROUPS = [
             "mode": "word"
           },
           {
+            "term": "chastityplug",
+            "mode": "word"
+          },
+          {
+            "term": "lockedchastity",
+            "mode": "word"
+          },
+          {
             "term": "crossdresser",
             "mode": "word"
           },
@@ -1487,6 +1559,10 @@ export const CATEGORY_GROUPS = [
           },
           {
             "term": "transgender",
+            "mode": "word"
+          },
+          {
+            "term": "transgirl",
             "mode": "word"
           }
         ],
