@@ -1,9 +1,10 @@
 export async function contactAddress(request,env,verify=fetch) {
  const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex','X-Content-Type-Options':'nosniff'}});
  const url=new URL(request.url);
+ const email=url.searchParams.get('topic')==='listing'?env.LISTING_EMAIL:env.CONTACT_EMAIL;
  if(request.headers.get('Origin')!==url.origin)return reply({error:'Invalid origin.'},403);
- if(!env.TURNSTILE_SECRET_KEY||!env.CONTACT_EMAIL)return reply({error:'Contact verification is not configured.'},503);
- if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(env.CONTACT_EMAIL))return reply({error:'Contact configuration error.'},503);
+ if(!env.TURNSTILE_SECRET_KEY||!email)return reply({error:'Contact verification is not configured.'},503);
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return reply({error:'Contact configuration error.'},503);
  if(!request.headers.get('Content-Type')?.startsWith('application/x-www-form-urlencoded'))return reply({error:'Invalid request type.'},415);
  // Bound streaming body before parsing, including requests without Content-Length.
  const reader=request.body?.getReader();let size=0;const chunks=[];
@@ -18,6 +19,6 @@ export async function contactAddress(request,env,verify=fetch) {
   if(!result.ok)return reply({error:'Verification service unavailable.'},503);
   const checked=await result.json();
   if(!checked.success||checked.hostname!==url.hostname||checked.action!=='contact')return reply({error:'Verification failed. Refresh and try again.'},403);
-  return reply({email:env.CONTACT_EMAIL});
+  return reply({email});
  }catch{return reply({error:'Verification service unavailable. Please try again.'},503);}
 }
