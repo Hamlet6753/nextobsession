@@ -15,7 +15,7 @@ async function saveEvent(db,event){
  catch(error){unavailable('database-write-failed',error);return false;}
 }
 export function normalizeEvent(data,request,now=Date.now()) {
- if(!data||data.consent!=='granted'||!UUID.test(data.event_id)||!UUID.test(data.session_id)||!['pageview','click'].includes(data.event_type)||!knownPath(data.path)||!knownPath(data.landing_path))return null;
+ if(!data||!UUID.test(data.event_id)||!UUID.test(data.session_id)||!['pageview','click'].includes(data.event_type)||!knownPath(data.path)||!knownPath(data.landing_path))return null;
  const kind=data.path==='/'?(data.page_kind==='search'?'search':'home'):data.path.startsWith('/creator/')?'creator':data.path==='/random-photos'?'random-photos':'information';
  const ua=request.headers.get('User-Agent')||'';
  const device=/ipad|tablet/i.test(ua)?'tablet':/mobile|android|iphone/i.test(ua)?'mobile':'desktop';

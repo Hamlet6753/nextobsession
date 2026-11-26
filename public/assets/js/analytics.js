@@ -1,11 +1,11 @@
 (() => {
-  // First-party analytics, opt-in. No IPs, account identity, search terms, full
+  // Automatic first-party analytics. No IPs, account identity, search terms, full
   // referrer URLs or advertising click IDs are sent to the collector.
   if(location.hostname!=='nextobsession.fans'||location.pathname.startsWith('/admin')||navigator.webdriver)return;
-  const consentKey='no-analytics-consent-v1',sessionKey='no-analytics-session-v1',ttl=30*60*1000;
-  const excluded=navigator.globalPrivacyControl===true||navigator.doNotTrack==='1';
-  let consent='unknown';try{consent=localStorage.getItem(consentKey)||'unknown';}catch{}
-  if(excluded)consent='denied';
+  const sessionKey='no-analytics-session-v1',ttl=30*60*1000;
+  let excluded=navigator.globalPrivacyControl===true||navigator.doNotTrack==='1';
+  try{if(localStorage.getItem('no-analytics-consent-v1')==='denied')excluded=true;}catch{}
+  if(excluded)return;
   const landing=location.pathname;
   const tag=value=>(value||'').replace(/[^a-zA-Z0-9_. /:@+-]/g,'').slice(0,80);
   const params=new URLSearchParams(location.search);
@@ -31,7 +31,7 @@
     scheduled=null;
   }
   function schedule(){
-    if(!ready||busy||unloading||scheduled!==null||!queue.length||consent!=='granted'||document.hidden)return;
+    if(!ready||busy||unloading||scheduled!==null||!queue.length||document.hidden)return;
     scheduledIdle=false;
     scheduled=setTimeout(()=>{
       scheduled=null;
@@ -40,7 +40,7 @@
     },Math.max(350,blockedUntil-Date.now()));
   }
   async function flush(){
-    if(!ready||busy||unloading||consent!=='granted'||!queue.length||document.hidden)return;
+    if(!ready||busy||unloading||!queue.length||document.hidden)return;
     if(Date.now()<blockedUntil){schedule();return;}
     busy=true;active=queue.shift();activeController=new AbortController();
     const controller=activeController;
@@ -49,7 +49,7 @@
       const response=await fetch('/api/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:active,credentials:'omit',cache:'no-store',signal:controller.signal});
       if(!response.ok)throw new Error('Analytics temporarily unavailable');
     }catch{
-      if(consent==='granted'&&!unloading){
+      if(!unloading){
         if(queue.length<maxQueue)queue.unshift(active);
         blockedUntil=Date.now()+60000;
         try{sessionStorage.setItem(backoffKey,String(blockedUntil));}catch{}
@@ -59,9 +59,9 @@
     }
   }
   function send(event_type,action='',target=''){
-    if(consent!=='granted'||queue.length>=maxQueue)return;
+    if(queue.length>=maxQueue)return;
     try{
-      const s=getSession(),body=JSON.stringify({consent:'granted',event_id:crypto.randomUUID(),session_id:s.id,event_type,path:location.pathname,page_kind:location.pathname==='/'&&location.search?'search':'home',action,target,...s.first});
+      const s=getSession(),body=JSON.stringify({event_id:crypto.randomUUID(),session_id:s.id,event_type,path:location.pathname,page_kind:location.pathname==='/'&&location.search?'search':'home',action,target,...s.first});
       queue.push(body);schedule();
     }catch{}
   }
@@ -70,7 +70,7 @@
   window.addEventListener('pageshow',()=>{unloading=false;schedule();});
   window.addEventListener('pagehide',()=>{
     unloading=true;cancelScheduled();
-    if(consent!=='granted'||Date.now()<blockedUntil)return;
+    if(Date.now()<blockedUntil)return;
     const pending=[...(active?[active]:[]),...queue];queue.length=0;
     activeController?.abort();
     // Beacon is best effort. If an in-flight event is repeated, event_id dedupes it.
@@ -82,22 +82,10 @@
       }catch{}
     }
   });
-  let counted=false;
-  function pageview(){if(!counted&&consent==='granted'){counted=true;send('pageview');}}
-  const banner=document.createElement('aside');banner.className='analytics-consent';banner.setAttribute('aria-label','Analytics preferences');
-  const text=document.createElement('p');text.textContent='Allow site analytics? We count pages and clicks and remember the source of this browser session. No IP addresses are stored in our analytics.';
-  const policy=document.createElement('a');policy.href='/privacy';policy.textContent='Privacy';
-  const accept=document.createElement('button');accept.type='button';accept.textContent='Allow analytics';
-  const reject=document.createElement('button');reject.type='button';reject.className='secondary';reject.textContent='Decline';
-  banner.append(text,policy,accept,reject);
-  function choose(value){consent=value;try{localStorage.setItem(consentKey,value);}catch{}if(value==='denied'){queue.length=0;cancelScheduled();activeController?.abort();session=null;blockedUntil=0;try{sessionStorage.removeItem(sessionKey);sessionStorage.removeItem(backoffKey);}catch{}}banner.remove();pageview();}
-  accept.addEventListener('click',()=>choose('granted'));reject.addEventListener('click',()=>choose('denied'));
-  function show(){if(excluded)return;if(!banner.isConnected)document.body.append(banner);}
-  if(consent==='unknown')show();else pageview();
-  const settings=document.querySelector('[data-analytics-preferences]');if(settings)settings.addEventListener('click',event=>{event.preventDefault();show();});
+  send('pageview');
   document.addEventListener('click',event=>{
     const element=event.target instanceof Element?event.target.closest('a[href],button'):null;
-    if(!element||element.closest('.analytics-consent')||element===settings)return;
+    if(!element)return;
     let action='button',target='';
     if(element.matches('a[href]')){
       try{const url=new URL(element.href,location.href);if(url.protocol==='mailto:')action='email';else if(!['http:','https:'].includes(url.protocol))return;else if(url.origin===location.origin){action='internal';target=url.pathname;}else{target=url.hostname;action=/(^|\.)onlyfans\.com$/i.test(url.hostname)?'onlyfans':element.closest('.creator-socials')?'social':element.closest('.profile-actions')?'creator-website':'external';}}catch{return;}
