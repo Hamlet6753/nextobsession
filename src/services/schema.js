@@ -1,3 +1,4 @@
+import { BRAND_X_URL } from '../components/brand-social.js';
 import { bannerUrl } from '../lib/banner.js';
 import { avatarUrl } from '../lib/avatar.js';
 import { normalizeSocialLinks } from '../lib/social-links.js';
@@ -15,7 +16,7 @@ export function schemaGraph(title,{url,description='',directory=false,adult=fals
  const canonical=canonicalUrl(url,directory);
  const pageId=canonical+'#webpage';
  const graph=[
-  {'@type':'Organization','@id':BRAND_ID,name:'NextObsession',url:SITE_ORIGIN+'/',logo:{'@type':'ImageObject',url:SITE_ORIGIN+'/logo-1024.png'}},
+  {'@type':'Organization','@id':BRAND_ID,name:'NextObsession',url:SITE_ORIGIN+'/',sameAs:[BRAND_X_URL],logo:{'@type':'ImageObject',url:SITE_ORIGIN+'/logo-1024.png'}},
   {'@type':'WebSite','@id':SITE_ID,url:SITE_ORIGIN+'/',name:'NextObsession.fans',inLanguage:'en',publisher:{'@id':BRAND_ID}}
  ];
  let type=PAGE_TYPES[url?.pathname]||'WebPage';

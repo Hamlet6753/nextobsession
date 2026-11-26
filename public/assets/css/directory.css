@@ -190,3 +190,7 @@
   .discovery-link { transition:none }
   .discovery-link:hover { transform:none }
 }
+
+@media (max-width:600px) {
+  .hero-description--default { display:none }
+}
